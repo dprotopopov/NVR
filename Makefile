@@ -7,31 +7,31 @@ CC       = g++
 #CFLAGS	 =-g -Wall -O3 -lasound -lcurl -lxml2 `xml2-config --cflags` \
 #CFLAGS	 =-g -Wall -O3 -lintl -lpthread -ldsound -lwinmm -lcurl -lxml2 `xml2-config --cflags` \
 CFLAGS	 =-g -Wall -O3 -lpthread -ldsound -lwinmm -lcurl -lxml2 `xml2-config --cflags` \
-	-Iboost -Ibower_components/tinyxml_2_6_2 -Ibower_components/tinyxpath_1_3_1 \
-	-Lbower_components/tinyxml_2_6_2 -Lbower_components/tinyxpath_1_3_1 \
-	boost/stage/lib/libboost_regex.a
+	-I~/NVR/boost -Ibower_components/tinyxml_2_6_2 -I~/NVR/bower_components/tinyxpath_1_3_1 \
+	-L~/NVR/bower_components/tinyxml_2_6_2 -L~/NVR/bower_components/tinyxpath_1_3_1 \
+	~/NVR/boost/stage/lib/libboost_regex.a
 TARGET	 =nvr
 DESTDIR ?=
 LOCDIR   = ./locale
 CONFDIR  = ./
 
 OBJ =  display.o i18n.o main.o menu.o osd.o remote.o tools.o \
-	bower_components/tinyxml_2_6_2/tinyxml.o \
-	bower_components/tinyxml_2_6_2/tinystr.o \
-	bower_components/tinyxml_2_6_2/tinyxmlparser.o \
-	bower_components/tinyxml_2_6_2/tinyxmlerror.o \
-	bower_components/tinyxpath_1_3_1/htmlutil.o \
-	bower_components/tinyxpath_1_3_1/lex_util.o \
-	bower_components/tinyxpath_1_3_1/action_store.o \
-	bower_components/tinyxpath_1_3_1/tokenlist.o \
-	bower_components/tinyxpath_1_3_1/xpath_stack.o \
-	bower_components/tinyxpath_1_3_1/xml_util.o \
-	bower_components/tinyxpath_1_3_1/xpath_expression.o \
-	bower_components/tinyxpath_1_3_1/xpath_static.o \
-	bower_components/tinyxpath_1_3_1/xpath_stream.o \
-	bower_components/tinyxpath_1_3_1/xpath_syntax.o \
-	bower_components/tinyxpath_1_3_1/xpath_processor.o \
-	bower_components/tinyxpath_1_3_1/node_set.o
+	~/NVR/bower_components/tinyxml_2_6_2/tinyxml.o \
+	~/NVR/bower_components/tinyxml_2_6_2/tinystr.o \
+	~/NVR/bower_components/tinyxml_2_6_2/tinyxmlparser.o \
+	~/NVR/bower_components/tinyxml_2_6_2/tinyxmlerror.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/htmlutil.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/lex_util.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/action_store.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/tokenlist.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/xpath_stack.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/xml_util.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/xpath_expression.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/xpath_static.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/xpath_stream.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/xpath_syntax.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/xpath_processor.o \
+	~/NVR/bower_components/tinyxpath_1_3_1/node_set.o
 
 DEFINES += -DCONFDIR=\"$(CONFDIR)\"
 DEFINES += -DLOCDIR=\"$(LOCDIR)\"
