@@ -16,4 +16,4 @@ cd ~/NVR/bower_components/tinyxml_2_6_2 && make clean && make
 # to build TinyXPath under Linux:
 cd ~/NVR/bower_components/tinyxpath_1_3_1 && apt-get install -y automake && autoreconf --force --install && make -f Makefile.configure && ./configure && make clean && make
 # build and run
-cd ~/NVR && make clean && make && ./nvr
+cd ~/NVR && git pull && make clean && make && ./nvr
