@@ -5,13 +5,32 @@ CC       = g++
 #For cygwin you will also need -lpthread -ldsound -lwinmm and remove -lasound.
 #Your linker can't find the symbols in gettext's library - make sure you're linking to it with the proper -l options. Read the info pages for info :)
 #CFLAGS	 =-g -Wall -O3 -lasound -lcurl -lxml2 `xml2-config --cflags`
-CFLAGS	 =-g -Wall -O3 -lintl -lpthread -ldsound -lwinmm -lcurl -lxml2 `xml2-config --cflags` -I boost -I bower_components/tinyxml_2_6_2 -I bower_components/tinyxpath_1_3_1 -Lboost/stage/lib/
+CFLAGS	 =-g -Wall -O3 -lintl -lpthread -ldsound -lwinmm -lcurl -lxml2 `xml2-config --cflags` \
+	-I boost -I bower_components/tinyxml_2_6_2 -I bower_components/tinyxpath_1_3_1 \
+	-L bower_components/tinyxml_2_6_2 -L bower_components/tinyxpath_1_3_1 \
+	boost/stage/lib/libboost_regex.a
 TARGET	 =nvr
 DESTDIR ?=
 LOCDIR   = ./locale
 CONFDIR  = ./
 
-OBJ =  display.o i18n.o main.o menu.o osd.o remote.o tools.o
+OBJ =  display.o i18n.o main.o menu.o osd.o remote.o tools.o \
+	bower_components/tinyxml_2_6_2/tinyxml.o \
+	bower_components/tinyxml_2_6_2/tinystr.o \
+	bower_components/tinyxml_2_6_2/tinyxmlparser.o \
+	bower_components/tinyxml_2_6_2/tinyxmlerror.o \
+	bower_components/tinyxpath_1_3_1/htmlutil.o \
+	bower_components/tinyxpath_1_3_1/lex_util.o \
+	bower_components/tinyxpath_1_3_1/action_store.o \
+	bower_components/tinyxpath_1_3_1/tokenlist.o \
+	bower_components/tinyxpath_1_3_1/xpath_stack.o \
+	bower_components/tinyxpath_1_3_1/xml_util.o \
+	bower_components/tinyxpath_1_3_1/xpath_expression.o \
+	bower_components/tinyxpath_1_3_1/xpath_static.o \
+	bower_components/tinyxpath_1_3_1/xpath_stream.o \
+	bower_components/tinyxpath_1_3_1/xpath_syntax.o \
+	bower_components/tinyxpath_1_3_1/xpath_processor.o \
+	bower_components/tinyxpath_1_3_1/node_set.o
 
 DEFINES += -DCONFDIR=\"$(CONFDIR)\"
 DEFINES += -DLOCDIR=\"$(LOCDIR)\"

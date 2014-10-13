@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <Menu title="Hauptmenu">
-	<Item type="menu" title="Summary" />
+	<Item type="menu" title="Summary" >
 		<Item type="list" browsable="false" title="Select" >~/summary.sh</Item>
 	</Item>
 	<Item id="channels" type="menu" title="Channels" >
@@ -50,8 +50,8 @@
 			</Item>
 		</Item>
 	</Item>
-	<Item type="command" key="k1" browsable="false" title="Pop" trace="1 klicked" >~/play.sh http://www.abc.net.au/triplej/media/listen.htm?show=listen</Item>
-	<Item type="command" key="k2" browsable="false" title="Rock" trace="2 klicked" >~/play.sh http://www.abc.net.au/res/streaming/audio/windows/triple_j.asx</Item>
-	<Item type="command" key="k3" browsable="false" title="Jazz" trace="3 klicked" >~/play.sh http://abc.net.au/res/streaming/audio/mp3/triplej.pls</Item>
-	<Item type="command" key="k4" browsable="false" title="Classic" trace="4 klicked" >~/play.sh http://www.abc.net.au/triplej/media/listen.htm?show=listen</Item>
+	<Item type="command" key="k1" browsable="false" title="F1 - Pop" trace="1 klicked" >~/play.sh http://www.abc.net.au/triplej/media/listen.htm?show=listen</Item>
+	<Item type="command" key="k2" browsable="false" title="F2 - Rock" trace="2 klicked" >~/play.sh http://www.abc.net.au/res/streaming/audio/windows/triple_j.asx</Item>
+	<Item type="command" key="k3" browsable="false" title="F3 - Jazz" trace="3 klicked" >~/play.sh http://abc.net.au/res/streaming/audio/mp3/triplej.pls</Item>
+	<Item type="command" key="k4" browsable="false" title="F4 - Classic" trace="4 klicked" >~/play.sh http://www.abc.net.au/triplej/media/listen.htm?show=listen</Item>
 </Menu>

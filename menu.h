@@ -4,33 +4,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <iostream>
+#include <sstream>
 #include <cstdlib>
 #include <cstring>
 #include <iterator>
-#include <regex>
 #include <vector>
-#include <sstream>
 #include <map>    //подключили библиотеку для работы с map
 
 #include "display.h"
 #include "i18n.h"
 #include "osd.h"
 
+#include <tinystr.h>
 #include <tinyxml.h>
 #include <xpath_processor.h>
-
 #include <boost/regex.hpp>
-
-#ifdef BOOST_MSVC
-#pragma warning(disable:4512 4244)
-#endif
-
-#include <boost/program_options.hpp>
 
 /*** cXmlMenu *******************************************************************************/
 class cXmlMenu : public cOsdMenu {
 	private:
-		const char *xpath = "/Menu";
+		const char *xpath;
 		std::vector<std::string> collection;
 		std::vector<std::string>::iterator selected;
 		cDisplayMenu DisplayMenu;
@@ -41,9 +35,10 @@ class cXmlMenu : public cOsdMenu {
 		eOsdState ProcessKey(eKeys Key);
 		void killSubMenu();
 		bool executeItem(const char *Xpath);
-		static const char *GetTitle(const char *Xpath);
+		const char *GetTitle(const char *Xpath);
 		void Set(const char *Xpath);
 		void Update();
+		void LoadFile();
 };
 
 /*** cMenuMain ***********************************************************************************/
