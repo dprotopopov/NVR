@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<Menu title="Hauptmenu">
+	<Item type="menu" title="Summary" />
+		<Item type="list" browsable="false" title="Select" >~/summary.sh</Item>
+	</Item>
+	<Item id="channels" type="menu" title="Channels" >
+		<Item type="list" title="Select" >cd ~ && type channels.list</Item>
+		<Item type="command" key="k1" browsable="false" hidden="false" title="F1 - Add To Favorites" regex="(.*)" >cd ~ && echo $& >> favorites.list</Item>
+		<Item type="command" key="k2" browsable="false" hidden="false" title="F2 - Save Channels" >cd ~ && cp channels.list channels.list.backup</Item>
+		<Item type="command" key="k3" browsable="false" hidden="false" title="F3 - Add New Channels" >cd ~ && rm channels.list && cp newchannels.list channels.list</Item>
+		<Item type="command" key="k4" browsable="false" hidden="false" title="F4 - Restore Channels" >cd ~ && cp channels.list.backup channels.list</Item>
+		<Item type="goto" key="k3" browsable="false" hidden="true" title="Add New Channels" >channels</Item>
+		<Item type="goto" key="k4" browsable="false" hidden="true" title="Restore Channels" >channels</Item>
+	</Item>
+	<Item id="favorites" ttype="menu" title="Favorites" >
+		<Item type="list" title="Select" >cd ~ && type favorites.list</Item>
+		<Item type="command" key="k1" browsable="false" hidden="false" title="F1 - Remove From Favorites" regex="(.*)" >cd ~ && sed -i '/$0/d' favorites.list</Item>
+		<Item type="command" key="k2" browsable="false" hidden="false" title="F2 - Save Favorites" >cd ~ && cp favorites.list favorites.list.backup</Item>
+		<Item type="command" key="k3" browsable="false" hidden="false" title="F3 - Add New Favorites" >cd ~ && rm favorites.list && cp newfavorites.list favorites.list</Item>
+		<Item type="command" key="k4" browsable="false" hidden="false" title="F4 - Restore Favorites" >cd ~ && cp favorites.list.backup favorites.list</Item>
+		<Item type="goto" key="k1" browsable="false" hidden="true" title="Remove From Favorites" >favorites</Item>
+		<Item type="goto" key="k3" browsable="false" hidden="true" title="Add New Favorites" >favorites</Item>
+		<Item type="goto" key="k4" browsable="false" hidden="true" title="Restore Favorites" >favorites</Item>
+	</Item>
+	<Item id="mediaPlayer" type="menu" title="MediaPlayer" >
+		<Item type="list" title="Select" >ls -l</Item>
+		<Item type="command" key="k0" browsable="false" thidden="true" title="Home" >cd ~</Item>
+		<Item type="command" key="k1" browsable="false" thidden="true" title="Up" >cd ..</Item>
+		<Item type="command" key="kOk" browsable="false" thidden="true" title="Play" regex="(.*)" >if [ -f $0 ] ~/play.sh  $&</Item>
+		<Item type="command" key="kOk" hidden="true" title="Folder Selected" regex="(.*)" >if [ -d $0 ] cd $0</Item>
+		<Item type="goto" key="kOk" hidden="true" title="Folder Selected" >mediaPlayer</Item>
+	</Item>
+	<Item type="menu" title="Settings" >
+		<Item type="menu" title="Network" >
+			<Item type="menu" title="W-LAN" >
+				<Item type="list" title="Select" >cd ~ && type w-lan.list</Item>
+				<Item type="command" key="kOk" hidden="true" title="W-LAN Selected" regex="(.*)" >cd ~ && ./network.sh $0.conf</Item>
+				<Item type="goto" key="kOk" hidden="true" title="W-LAN Selected" regex="(.*)" >dhcp</Item>
+			</Item>
+			<Item type="menu" title="LAN" >
+				<Item id="dhcp" type="menu" title="DHCP" >
+					<Item type="menu" title="NO" >
+						<Item type="input" title="IP" />
+						<Item type="input" title="SUBNET MASK" />
+						<Item type="input" title="GATEWAY" />
+						<Item type="input" title="DNS" />
+					</Item>
+					<Item type="command" title="YES" >~/dhcp.sh</Item>
+				</Item>
+			</Item>
+		</Item>
+	</Item>
+	<Item type="command" key="k1" browsable="false" title="Pop" trace="1 klicked" >~/play.sh http://www.abc.net.au/triplej/media/listen.htm?show=listen</Item>
+	<Item type="command" key="k2" browsable="false" title="Rock" trace="2 klicked" >~/play.sh http://www.abc.net.au/res/streaming/audio/windows/triple_j.asx</Item>
+	<Item type="command" key="k3" browsable="false" title="Jazz" trace="3 klicked" >~/play.sh http://abc.net.au/res/streaming/audio/mp3/triplej.pls</Item>
+	<Item type="command" key="k4" browsable="false" title="Classic" trace="4 klicked" >~/play.sh http://www.abc.net.au/triplej/media/listen.htm?show=listen</Item>
+</Menu>
