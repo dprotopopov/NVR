@@ -1,0 +1,21 @@
+{
+  "name": "NVR",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dprotopopov/NVR",
+  "authors": [
+    "dprotopopov <protopopov@narod.ru>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Cpp-Mplayer-Wrapper": "https://github.com/h8h/Cpp-Mplayer-Wrapper.git",
+    "tinyxml_2_6_2": "http://citylan.dl.sourceforge.net/project/tinyxml/tinyxml/2.6.2/tinyxml_2_6_2.zip",
+    "tinyxpath_1_3_1": "http://garr.dl.sourceforge.net/project/tinyxpath/TinyXPath%20%28windows%20-%20zip%29/TinyXPath%201.3.1/tinyxpath_1_3_1.zip"
+  }
+}
