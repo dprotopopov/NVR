@@ -16,10 +16,10 @@
 #include "i18n.h"
 #include "osd.h"
 
-#include <bower_components/tinyxml_2_6_2/tinystr.h>
-#include <bower_components/tinyxml_2_6_2/tinyxml.h>
-#include <bower_components/tinyxpath_1_3_1/xpath_processor.h>
-#include <boost/regex.hpp>
+#include "bower_components/tinyxml_2_6_2/tinystr.h"
+#include "bower_components/tinyxml_2_6_2/tinyxml.h"
+#include "bower_components/tinyxpath_1_3_1/xpath_processor.h"
+#include "boost/regex.hpp"
 
 /*** cXmlMenu *******************************************************************************/
 class cXmlMenu : public cOsdMenu {
