@@ -131,9 +131,9 @@ cXmlMenu::cXmlMenu(const char *Xpath)
 :cOsdMenu(tr(GetTitle(xpath = Xpath)))
 {
 	LOG("BEGIN XmlMenu::cXmlMenu(const char *Xpath)");
+	LOG(Xpath);
 	LoadFile();
 	Set(Xpath);
-	LOG(Xpath);
 	LOG("END XmlMenu::cXmlMenu(const char *Xpath)");
 }
 cXmlMenu::cXmlMenu(eOsdState State)
@@ -361,21 +361,25 @@ void cXmlMenu::Set(const char *Xpath) {
 			if(fgets(buffer, sizeof(buffer), pipe) != NULL){
 				add(tr(buffer));
 				collection.push_back(std::make_pair(string(item.c_str()),string(buffer)));
+				LOG(item.c_str());
+				LOG(buffer);
 			}
 		}
 		pclose(pipe);
 	}
 	// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
-	TiXmlString items1(current+"/Item[not(@type='list') and (not(@hidden) or @hidden='false')]");
+	TiXmlString items1(current+"/Item[not(@type='list') and not(@hidden and @hidden='true')]");
 	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count1; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
-		TiXmlString item("(" + current + "/Item[not(@type='list') and (not(@hidden) or @hidden='false')])[" + c_str(toStr(i)) + "]");
+		TiXmlString item("(" + current + "/Item[not(@type='list') and not(@hidden and @hidden='true')])[" + c_str(toStr(i)) + "]");
 		TiXmlString attr(item + "/@title");
 		xpath_processor xproc(doc -> RootElement(),attr.c_str());
 		TiXmlString title(xproc.S_compute_xpath());
 		add(tr(title.c_str()));
+		LOG(item.c_str());
+		LOG(title.c_str());
 	}
 	// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
 	TiXmlString items2(current+"/Item[not(@type='list') and @browsable and not(@browsable='false')]");
@@ -388,6 +392,8 @@ void cXmlMenu::Set(const char *Xpath) {
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString data(xproc.S_compute_xpath());
 		collection.push_back(std::make_pair(string(item.c_str()),string(data.c_str())));
+		LOG(item.c_str());
+		LOG(data.c_str());
 	}
 	selected = collection.begin();
 	DisplayMenu.clear();
