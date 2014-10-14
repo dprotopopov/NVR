@@ -165,6 +165,7 @@ cXmlMenu::cXmlMenu(eOsdState State)
 			LOG(count);
 			for(unsigned i = 1; i <= count; i++) {
 				// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
+				// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
 				TiXmlString item("(" + current + "/Item" + stateFilter[State] + ")[" + c_str(toStr(i)) + "]");
 				TiXmlString text(item + "/text()");
 				xpath_processor xproc(doc -> RootElement(),text.c_str());
@@ -220,6 +221,7 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			LOG(count);
 			for(unsigned i = 1; i <= count; i++) {
 				// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
+				// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
 				TiXmlString item("(" + current + "/Item" + keyFilter[Key] + ")[" + c_str(toStr(i)) + "]");
 				TiXmlString text(item + "/text()");
 				xpath_processor xproc(doc -> RootElement(),text.c_str());
