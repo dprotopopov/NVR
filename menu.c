@@ -243,9 +243,8 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			case kOk:
 						{
 							// Обработка выбранного отображаемого пункта меню
-							LOG(selected -> first.c_str());
-							LOG(selected -> second.c_str());
-							executeItem(selected -> first.c_str(),selected -> second.c_str());
+							std::pair<std::string, std::string> keyvalue = *selected;
+							executeItem(keyvalue.first.c_str(),keyvalue.second.c_str());
 						}
 						break;
 			case kMenu:
