@@ -6,7 +6,7 @@ CC       = g++
 #Your linker can't find the symbols in gettext's library - make sure you're linking to it with the proper -l options. Read the info pages for info :)
 #CFLAGS	 =-g -Wall -O3 -lasound -lcurl -lxml2 `xml2-config --cflags` \
 #CFLAGS	 =-g -Wall -O3 -lintl -lpthread -ldsound -lwinmm -lcurl -lxml2 `xml2-config --cflags` \
-CFLAGS	 += -g -Wall -O3 -lxml2 'xml2-config --cflags' 
+CFLAGS	 += -g -Wall -O3 -lintl -lxml2 'xml2-config --cflags' 
 CFLAGS	 += -I boost -I bower_components/tinyxml_2_6_2 -I bower_components/tinyxpath_1_3_1 
 CFLAGS	 += -L bower_components/tinyxml_2_6_2 -L bower_components/tinyxpath_1_3_1 
 CFLAGS	 +=  boost/stage/lib/libboost_regex.a
