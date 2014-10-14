@@ -164,7 +164,8 @@ cXmlMenu::cXmlMenu(eOsdState State)
 			unsigned count = xproc.u_compute_xpath_node_set ();
 			LOG(count);
 			for(unsigned i = 1; i <= count; i++) {
-				TiXmlString item(current + "/Item" + stateFilter[State] + "[" + c_str(toStr(i)) + "]");
+				// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
+				TiXmlString item("(" + current + "/Item" + stateFilter[State] + ")[" + c_str(toStr(i)) + "]");
 				TiXmlString text(item + "/text()");
 				xpath_processor xproc(doc -> RootElement(),text.c_str());
 				TiXmlString data(xproc.S_compute_xpath());
@@ -214,7 +215,8 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			unsigned count = xproc.u_compute_xpath_node_set ();
 			LOG(count);
 			for(unsigned i = 1; i <= count; i++) {
-				TiXmlString item(current + "/Item" + keyFilter[Key] + "[" + c_str(toStr(i)) + "]");
+				// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
+				TiXmlString item("(" + current + "/Item" + keyFilter[Key] + ")[" + c_str(toStr(i)) + "]");
 				TiXmlString text(item + "/text()");
 				xpath_processor xproc(doc -> RootElement(),text.c_str());
 				TiXmlString data(xproc.S_compute_xpath());
@@ -347,7 +349,8 @@ void cXmlMenu::Set(const char *Xpath) {
 	xpath_processor xproc(doc -> RootElement(),items.c_str());
 	unsigned count = xproc.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count; i++) {
-		TiXmlString item(current + "/Item[@type='list'][" + c_str(toStr(i)) + "]");
+		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
+		TiXmlString item("(" + current + "/Item[@type='list'])[" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString command(xproc.S_compute_xpath());
@@ -362,21 +365,25 @@ void cXmlMenu::Set(const char *Xpath) {
 		}
 		pclose(pipe);
 	}
-	TiXmlString items1(current+"/Item[not(@type='list')][not(@hidden) or @hidden='false']");
+	// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
+	TiXmlString items1("(" + current+"/Item[not(@type='list')])[not(@hidden) or @hidden='false']");
 	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count1; i++) {
-		TiXmlString item(current + "/Item[not(@type='list')][not(@hidden) or @hidden='false'][" + c_str(toStr(i)) + "]");
+		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
+		TiXmlString item("((" + current + "/Item[not(@type='list')])[not(@hidden) or @hidden='false'])[" + c_str(toStr(i)) + "]");
 		TiXmlString attr(item + "/@title");
 		xpath_processor xproc(doc -> RootElement(),attr.c_str());
 		TiXmlString title(xproc.S_compute_xpath());
 		add(tr(title.c_str()));
 	}
-	TiXmlString items2(current+"/Item[not(@type='list')][@browsable and not(@browsable='false')]");
+	// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
+	TiXmlString items2("(" + current+"/Item[not(@type='list')])[@browsable and not(@browsable='false')]");
 	xpath_processor xproc2(doc -> RootElement(),items2.c_str());
 	unsigned count2 = xproc2.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count2; i++) {
-		TiXmlString item(current + "/Item[not(@type='list')][@browsable and not(@browsable='false')][" + c_str(toStr(i)) + "]");
+		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
+		TiXmlString item("((" + current + "/Item[not(@type='list')])[@browsable and not(@browsable='false')])[" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString data(xproc.S_compute_xpath());
