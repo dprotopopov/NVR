@@ -309,7 +309,7 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 		show();
 	}
 	else if(std::strcmp(type.c_str(),"goto")==0) {
-		TiXmlString next("/Menu//[@id='"+value+"'][1]");
+		TiXmlString next("/Menu//Item[@id='"+value+"'][1]");
 		AddSubMenu(new cXmlMenu(next.c_str()));
 		submenuOpen = true;
 	}
@@ -364,11 +364,11 @@ void cXmlMenu::Set(const char *Xpath) {
 		TiXmlString title(xproc.S_compute_xpath());
 		add(tr(title.c_str()));
 	}
-	TiXmlString items2(current+"/Item[not(@type='list')][not(@browsable) or @browsable='true']");
+	TiXmlString items2(current+"/Item[not(@type='list')][@browsable and not(@browsable='false')]");
 	xpath_processor xproc2(doc -> RootElement(),items2.c_str());
 	unsigned count2 = xproc2.u_compute_xpath_node_set ();
 	for(unsigned i=1; i<=count2; i++) {
-		TiXmlString item(current + "/Item[not(@type='list')][not(@browsable) or @browsable='true'][" + c_str(toStr(i)) + "]");
+		TiXmlString item(current + "/Item[not(@type='list')][@browsable and not(@browsable='false')][" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString data(xproc.S_compute_xpath());
