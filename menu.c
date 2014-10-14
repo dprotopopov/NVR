@@ -163,7 +163,7 @@ cXmlMenu::cXmlMenu(eOsdState State)
 			xpath_processor xproc(doc -> RootElement(),items.c_str());
 			unsigned count = xproc.u_compute_xpath_node_set ();
 			LOG(count);
-			for(unsigned i=1; i<=count; i++) {
+			for(unsigned i = 1; i <= count; i++) {
 				TiXmlString item(current + "/Item" + stateFilter[State] + "[" + c_str(toStr(i)) + "]");
 				TiXmlString text(item + "/text()");
 				xpath_processor xproc(doc -> RootElement(),text.c_str());
@@ -213,7 +213,7 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			xpath_processor xproc(doc -> RootElement(),items.c_str());
 			unsigned count = xproc.u_compute_xpath_node_set ();
 			LOG(count);
-			for(unsigned i=1; i<=count; i++) {
+			for(unsigned i = 1; i <= count; i++) {
 				TiXmlString item(current + "/Item" + keyFilter[Key] + "[" + c_str(toStr(i)) + "]");
 				TiXmlString text(item + "/text()");
 				xpath_processor xproc(doc -> RootElement(),text.c_str());
@@ -271,15 +271,18 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 	bool submenuOpen = false;
 	TiXmlString item(Key);
 	TiXmlString data(Value);
-	TiXmlString attrText(item + "/text()");
 	TiXmlString attrType(item + "/@type");
 	TiXmlString attrRegex(item + "/@regex");
+	TiXmlString attrTitle(item + "/@title");
+	TiXmlString attrText(item + "/text()");
 	xpath_processor xprocType(doc -> RootElement(),attrType.c_str());
 	xpath_processor xprocRegex(doc -> RootElement(),attrRegex.c_str());
 	xpath_processor xprocValue(doc -> RootElement(),attrText.c_str());
-	TiXmlString value(xprocValue.S_compute_xpath());
+	xpath_processor xprocTitle(doc -> RootElement(),attrTitle.c_str());
 	TiXmlString type(xprocType.S_compute_xpath());
 	TiXmlString pattern(xprocRegex.S_compute_xpath());
+	TiXmlString value(xprocValue.S_compute_xpath());
+	TiXmlString title(xprocTitle.S_compute_xpath());
 	// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
 	if(std::strcmp(type.c_str(),"menu")==0) {
 		AddSubMenu(new cXmlMenu(item.c_str()));
@@ -320,6 +323,7 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 	LOG(type.c_str());
 	LOG(pattern.c_str());
 	LOG(value.c_str());
+	LOG(title.c_str());
 	LOG("END cXmlMenu::executeItem(const char *Key, const char *Value)");
 	return submenuOpen;
 }
@@ -333,14 +337,20 @@ void cXmlMenu::Set(const char *Xpath) {
 	LOG("BEGIN cXmlMenu::Set(const char *Xpath)");
 	LoadFile();
 	TiXmlString current(Xpath);
+	TiXmlString attrTitle(item + "/@title");
+	TiXmlString attrText(item + "/text()");
+	xpath_processor xprocValue(doc -> RootElement(),attrText.c_str());
+	xpath_processor xprocTitle(doc -> RootElement(),attrTitle.c_str());
+	TiXmlString value(xprocValue.S_compute_xpath());
+	TiXmlString title(xprocTitle.S_compute_xpath());
 	TiXmlString items(current+"/Item[@type='list']");
 	xpath_processor xproc(doc -> RootElement(),items.c_str());
 	unsigned count = xproc.u_compute_xpath_node_set ();
-	for(unsigned i=1; i<=count; i++) {
+	for(unsigned i = 1; i <= count; i++) {
 		TiXmlString item(current + "/Item[@type='list'][" + c_str(toStr(i)) + "]");
-		xpath_processor xproc(doc -> RootElement(),item.c_str());
+		TiXmlString text(item + "/text()");
+		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString command(xproc.S_compute_xpath());
-		LOG(command.c_str());
 		// http://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c
 		FILE* pipe = popen(command.c_str(), "r");
 		char buffer[512];
@@ -355,7 +365,7 @@ void cXmlMenu::Set(const char *Xpath) {
 	TiXmlString items1(current+"/Item[not(@type='list')][not(@hidden) or @hidden='false']");
 	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
-	for(unsigned i=1; i<=count1; i++) {
+	for(unsigned i = 1; i <= count1; i++) {
 		TiXmlString item(current + "/Item[not(@type='list')][not(@hidden) or @hidden='false'][" + c_str(toStr(i)) + "]");
 		TiXmlString attr(item + "/@title");
 		xpath_processor xproc(doc -> RootElement(),attr.c_str());
@@ -365,7 +375,7 @@ void cXmlMenu::Set(const char *Xpath) {
 	TiXmlString items2(current+"/Item[not(@type='list')][@browsable and not(@browsable='false')]");
 	xpath_processor xproc2(doc -> RootElement(),items2.c_str());
 	unsigned count2 = xproc2.u_compute_xpath_node_set ();
-	for(unsigned i=1; i<=count2; i++) {
+	for(unsigned i = 1; i <= count2; i++) {
 		TiXmlString item(current + "/Item[not(@type='list')][@browsable and not(@browsable='false')][" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
@@ -381,6 +391,8 @@ void cXmlMenu::Set(const char *Xpath) {
 	LOG(items.c_str());
 	LOG(items1.c_str());
 	LOG(items2.c_str());
+	LOG(value.c_str());
+	LOG(title.c_str());
 	LOG("END cXmlMenu::Set(const char *Xpath)");
 }
 // Получение заголовка меню
