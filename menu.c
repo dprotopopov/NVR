@@ -384,7 +384,7 @@ void cXmlMenu::Set(const char *Xpath) {
 	}
 	selected = collection.begin();
 	DisplayMenu.clear();
-	DisplayMenu.setTitle(title);
+	DisplayMenu.setTitle(title.c_str());
 	DisplayMenu.setMenuList(show());
 	DisplayMenu.Draw();
 	LOG(Xpath);
