@@ -166,8 +166,9 @@ cXmlMenu::cXmlMenu(eOsdState State)
 			LOG(count);
 			for(unsigned i=1; i<=count; i++) {
 				TiXmlString item(current + "/Item" + stateFilter[State] + "[" + c_str(toStr(i)) + "]");
-				LOG(item.c_str());
-				submenuOpen = executeItem(item.c_str()) || submenuOpen;
+				xpath_processor xproc(doc -> RootElement(),item.c_str());
+				TiXmlString data(xproc.S_compute_xpath());
+				submenuOpen = executeItem(item.c_str(),data.c_str()) || submenuOpen;
 			}
 			if(!submenuOpen){
 				Set(xpath);
@@ -214,8 +215,9 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			LOG(count);
 			for(unsigned i=1; i<=count; i++) {
 				TiXmlString item(current + "/Item" + keyFilter[Key] + "[" + c_str(toStr(i)) + "]");
-				LOG(item.c_str());
-				executeItem(item.c_str());
+				xpath_processor xproc(doc -> RootElement(),item.c_str());
+				TiXmlString data(xproc.S_compute_xpath());
+				executeItem(item.c_str(),data.c_str());
 			}
 			break;
 	}
@@ -230,12 +232,10 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 								case kLeft:
 									if(selected != collection.begin()) selected--;
 									else selected = collection.end();
-									LOG(selected -> c_str());
 									break;
 							case kRight:
 									if(selected != collection.end()) selected++;
 									else selected = collection.begin();
-									LOG(selected -> c_str());
 									break;
 							}
 						}
@@ -243,8 +243,9 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			case kOk:
 						{
 							// Обработка выбранного отображаемого пункта меню
-							LOG(selected -> c_str());
-							executeItem(selected -> c_str());
+							LOG(selected -> first.c_str());
+							LOG(selected -> second.c_str());
+							executeItem(selected -> first.c_str(),selected -> second.c_str());
 						}
 						break;
 			case kMenu:
@@ -262,17 +263,27 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 }
 // Обработка пункта меню
 // Возвращает true если было добавлено подменю
-bool cXmlMenu::executeItem(const char *Xpath) {
+bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 	LOG("BEGIN cXmlMenu::executeItem(const char *Xpath)");
-	LOG(Xpath);
+	LOG(Key);
+	LOG(Value);
 	LoadFile();
 	bool submenuOpen = false;
-	TiXmlString item(Xpath);
-	TiXmlString attr(item + "/@type");
+	TiXmlString item(Key);
+	TiXmlString data(Value);
+	xpath_processor xproc(doc -> RootElement(),item.c_str());
+	TiXmlString value(xproc.S_compute_xpath());
 	LOG(item.c_str());
-	LOG(attr.c_str());
-	xpath_processor xproc(doc -> RootElement(),attr.c_str());
-	TiXmlString type(xproc.S_compute_xpath());
+	LOG(data.c_str());
+	LOG(value.c_str());
+	TiXmlString attrType(item + "/@type");
+	TiXmlString attrRegex(item + "/@regex");
+	LOG(attrType.c_str());
+	LOG(attrRegex.c_str());
+	xpath_processor xprocType(doc -> RootElement(),attrType.c_str());
+	xpath_processor xprocRegex(doc -> RootElement(),attrRegex.c_str());
+	TiXmlString type(xprocType.S_compute_xpath());
+	TiXmlString pattern(xprocRegex.S_compute_xpath());
 	LOG(type.c_str());
 	// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
 	if(std::strcmp(type.c_str(),"menu")==0) {
@@ -280,42 +291,28 @@ bool cXmlMenu::executeItem(const char *Xpath) {
 		submenuOpen = true;
 	}
 	else if(std::strcmp(type.c_str(),"command")==0) {
-		TiXmlString attr(item + "/@regex");
-		//LOG(attr.c_str());
-		xpath_processor xproc(doc -> RootElement(),item.c_str());
-		xpath_processor xproc1(doc -> RootElement(),attr.c_str());
-		TiXmlString replacement(xproc.S_compute_xpath());
-		TiXmlString pattern(xproc1.S_compute_xpath());
-		//LOG(replacement.c_str());
-		//LOG(pattern.c_str());
 		boost::regex rx(string(pattern.c_str()),boost::regex::ECMAScript|boost::regex::icase);
-		string command(boost::regex_replace(string(selected -> c_str()),rx,string(replacement.c_str())));
+		string command(boost::regex_replace(data,rx,value));
 		LOG(command.c_str());
 		// http://stackoverflow.com/questions/8832326/how-can-i-execute-a-command-line-command-from-a-c-program
 		system(command.c_str());
 	}
 	else if(std::strcmp(type.c_str(),"add")==0) {
-		xpath_processor xproc(doc -> RootElement(),item.c_str());
-		TiXmlString title(xproc.S_compute_xpath());
-		add(tr(title.c_str()));
+		add(tr(value.c_str()));
 	}
 	else if(std::strcmp(type.c_str(),"show")==0) {
 		show();
 	}
 	else if(std::strcmp(type.c_str(),"goto")==0) {
-		xpath_processor xproc(doc -> RootElement(),item.c_str());
-		TiXmlString id(xproc.S_compute_xpath());
-		TiXmlString next("/Menu//[@id='"+id+"'][1]");
+		TiXmlString next("/Menu//[@id='"+value+"'][1]");
 		AddSubMenu(new cXmlMenu(next.c_str()));
 		submenuOpen = true;
 	}
 	{
 		// Вывод отладочной информации
 		TiXmlString attr(item + "/@trace");
-		//LOG(attr.c_str());
 		xpath_processor trace(doc -> RootElement(),attr.c_str());
 		TiXmlString msg(trace.S_compute_xpath());
-		//LOG(msg.c_str());
 		if(!msg.empty()) printf("%s\n",msg.c_str());
 	}
 	LOG("END cXmlMenu::executeItem(const char *Xpath)");
@@ -332,73 +329,44 @@ void cXmlMenu::Set(const char *Xpath) {
 	//LOG(Xpath);
 	LoadFile();
 	TiXmlString current(Xpath);
-	TiXmlString items(current+"/Item[not(@hidden) or @hidden='false']");
+	TiXmlString items(current+"/Item[@type='list']");
 	//LOG(items.c_str());
 	xpath_processor xproc(doc -> RootElement(),items.c_str());
 	unsigned count = xproc.u_compute_xpath_node_set ();
-	//LOG(count);
 	for(unsigned i=1; i<=count; i++) {
-		TiXmlString item(current + "/Item[not(@hidden) or @hidden='false'][" + c_str(toStr(i)) + "]");
-		TiXmlString attr(item + "/@type");
-		//LOG(item.c_str());
-		//LOG(attr.c_str());
-		xpath_processor xproc(doc -> RootElement(),attr.c_str());
-		TiXmlString type(xproc.S_compute_xpath());
-		//LOG(type.c_str());
-		if(std::strcmp(type.c_str(),"list")==0) {
-			xpath_processor xproc(doc -> RootElement(),item.c_str());
-			TiXmlString command(xproc.S_compute_xpath());
-			LOG(command.c_str());
-			// http://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c
-			FILE* pipe = popen(command.c_str(), "r");
-			char buffer[512];
-			while(!feof(pipe)) {
-				if(fgets(buffer, sizeof(buffer), pipe) != NULL)
-					add(tr(buffer));
+		TiXmlString item(current + "/Item[@type='list'][" + c_str(toStr(i)) + "]");
+		xpath_processor xproc(doc -> RootElement(),item.c_str());
+		TiXmlString command(xproc.S_compute_xpath());
+		LOG(command.c_str());
+		// http://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c
+		FILE* pipe = popen(command.c_str(), "r");
+		char buffer[512];
+		while(!feof(pipe)) {
+			if(fgets(buffer, sizeof(buffer), pipe) != NULL){
+				add(tr(buffer));
+				collection.push_back(std::make_pair(item.c_str(),tr(buffer)));
 			}
-			pclose(pipe);
 		}
-		else {
-			TiXmlString attr(item + "/@title");
-			//LOG(attr.c_str());
-			xpath_processor xproc(doc -> RootElement(),attr.c_str());
-			TiXmlString title(xproc.S_compute_xpath());
-			add(tr(title.c_str()));
-		}
+		pclose(pipe);
 	}
-	TiXmlString items1(current+"/Item[not(@browsable='false') or @browsable]");
-	//LOG(items1.c_str());
-	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
+	TiXmlString items1(current+"/Item[not(@type='list')][not(@hidden) or @hidden='false']");
+	xpath_processor xproc1(doc -> RootElement(),items.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
-	//LOG(count1);
 	for(unsigned i=1; i<=count1; i++) {
-		TiXmlString item(current + "/Item[not(@browsable='false') or @browsable][" + c_str(toStr(i)) + "]");
-		TiXmlString attr(item + "/@type");
-		//LOG(item.c_str());
-		//LOG(attr.c_str());
+		TiXmlString item(current + "/Item[not(@type='list')][not(@hidden) or @hidden='false'][" + c_str(toStr(i)) + "]");
+		TiXmlString attr(item + "/@title");
 		xpath_processor xproc(doc -> RootElement(),attr.c_str());
-		TiXmlString type(xproc.S_compute_xpath());
-		//LOG(type.c_str());
-		if(std::strcmp(type.c_str(),"list")==0) {
-			xpath_processor xproc(doc -> RootElement(),item.c_str());
-			TiXmlString command(xproc.S_compute_xpath());
-			//LOG(command.c_str());
-			// http://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c
-			FILE* pipe = popen(command.c_str(), "r");
-			char buffer[512];
-			while(!feof(pipe)) {
-				if(fgets(buffer, sizeof(buffer), pipe) != NULL)
-					collection.push_back(buffer);
-			}
-			pclose(pipe);
-		}
-		else {
-			TiXmlString attr(item + "/@title");
-			//LOG(attr.c_str());
-			xpath_processor xproc(doc -> RootElement(),attr.c_str());
-			TiXmlString title(xproc.S_compute_xpath());
-			collection.push_back(title.c_str());
-		}
+		TiXmlString title(xproc.S_compute_xpath());
+		add(tr(title.c_str()));
+	}
+	TiXmlString items2(current+"/Item[not(@type='list')][not(@browsable='false') or @browsable]");
+	xpath_processor xproc2(doc -> RootElement(),items1.c_str());
+	unsigned count2 = xproc2.u_compute_xpath_node_set ();
+	for(unsigned i=1; i<=count2; i++) {
+		TiXmlString item(current + "/Item[not(@type='list')][not(@browsable='false') or @browsable][" + c_str(toStr(i)) + "]");
+		xpath_processor xproc(doc -> RootElement(),item.c_str());
+		TiXmlString data(xproc.S_compute_xpath());
+		collection.push_back(std::make_pair(item.c_str(),data.c_str()));
 	}
 	selected = collection.begin();
 	DisplayMenu.clear();
@@ -414,8 +382,6 @@ const char * cXmlMenu::GetTitle(const char *Xpath) {
 	LoadFile();
 	TiXmlString item(Xpath);
 	TiXmlString attr(item + "/@title");
-	//LOG(item.c_str());
-	//LOG(attr.c_str());
 	xpath_processor xproc(doc -> RootElement(),attr.c_str());
 	TiXmlString title(xproc.S_compute_xpath());
 	static char buffer[512];
