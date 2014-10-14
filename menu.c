@@ -366,24 +366,24 @@ void cXmlMenu::Set(const char *Xpath) {
 		pclose(pipe);
 	}
 	// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
-	TiXmlString items1("(" + current+"/Item[not(@type='list')])[not(@hidden) or @hidden='false']");
+	TiXmlString items1(current+"/Item[not(@type='list') and (not(@hidden) or @hidden='false')]");
 	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count1; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
-		TiXmlString item("((" + current + "/Item[not(@type='list')])[not(@hidden) or @hidden='false'])[" + c_str(toStr(i)) + "]");
+		TiXmlString item("(" + current + "/Item[not(@type='list') and (not(@hidden) or @hidden='false')])[" + c_str(toStr(i)) + "]");
 		TiXmlString attr(item + "/@title");
 		xpath_processor xproc(doc -> RootElement(),attr.c_str());
 		TiXmlString title(xproc.S_compute_xpath());
 		add(tr(title.c_str()));
 	}
 	// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
-	TiXmlString items2("(" + current+"/Item[not(@type='list')])[@browsable and not(@browsable='false')]");
+	TiXmlString items2(current+"/Item[not(@type='list') and @browsable and not(@browsable='false')]");
 	xpath_processor xproc2(doc -> RootElement(),items2.c_str());
 	unsigned count2 = xproc2.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count2; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
-		TiXmlString item("((" + current + "/Item[not(@type='list')])[@browsable and not(@browsable='false')])[" + c_str(toStr(i)) + "]");
+		TiXmlString item("(" + current + "/Item[not(@type='list') and @browsable and not(@browsable='false')])[" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString data(xproc.S_compute_xpath());
