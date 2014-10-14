@@ -128,7 +128,7 @@ void cMenuSchedule::Update() {
 }
 /*** cXmlMenu *******************************************************************************/
 cXmlMenu::cXmlMenu(const char *Xpath)
-:cOsdMenu(tr(GetTitle(xpath = Xpath)))
+:cOsdMenu(tr(GetTitle(xpath = Xpath))) // Присвоение просто указателя может приводить к ошибкам если последующий код не контролирует память
 {
 	LOG("BEGIN XmlMenu::cXmlMenu(const char *Xpath)");
 	LOG(Xpath);
@@ -350,6 +350,7 @@ void cXmlMenu::Set(const char *Xpath) {
 	unsigned count = xproc.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
+		// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
 		TiXmlString item("(" + current + "/Item[@type='list'])[" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
@@ -367,12 +368,12 @@ void cXmlMenu::Set(const char *Xpath) {
 		}
 		pclose(pipe);
 	}
-	// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
 	TiXmlString items1(current+"/Item[not(@type='list') and not(@hidden and @hidden='true')]");
 	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count1; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
+		// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
 		TiXmlString item("(" + current + "/Item[not(@type='list') and not(@hidden and @hidden='true')])[" + c_str(toStr(i)) + "]");
 		TiXmlString attr(item + "/@title");
 		xpath_processor xproc(doc -> RootElement(),attr.c_str());
@@ -381,12 +382,12 @@ void cXmlMenu::Set(const char *Xpath) {
 		LOG(item.c_str());
 		LOG(title.c_str());
 	}
-	// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
 	TiXmlString items2(current+"/Item[not(@type='list') and @browsable and not(@browsable='false')]");
 	xpath_processor xproc2(doc -> RootElement(),items2.c_str());
 	unsigned count2 = xproc2.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count2; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
+		// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
 		TiXmlString item("(" + current + "/Item[not(@type='list') and @browsable and not(@browsable='false')])[" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
