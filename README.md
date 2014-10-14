@@ -2,8 +2,8 @@ NVR
 ===
 
 # Step 1 - Update your system
-apt-get update && apt-get install -y libtinyxml-dev git-core curl build-essential openssl libssl-dev automake git
 # if you’re on a Debian-based distribution like Ubuntu, try apt-get:
+apt-get update && apt-get install -y libtinyxml-dev git-core curl build-essential openssl libssl-dev automake git
 git clone --recursive git://github.com/dprotopopov/NVR.git
 # http://nodejs.org/download/
 cd ~/NVR && curl -sL https://deb.nodesource.com/setup | bash - && apt-get install -y nodejs build-essential npm
