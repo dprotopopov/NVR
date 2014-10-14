@@ -182,9 +182,8 @@ cXmlMenu::~cXmlMenu() {
 	LOG("BEGIN XmlMenu::~cXmlMenu()");
 	DisplayMenu.clear();
 	for(selected = collection.begin(); selected != collection.end(); selected++){
-		std::pair<std::string, std::string> keyvalue = *selected;
-		delete keyvalue.first;
-		delete keyvalue.second;
+		delete selected->first;
+		delete selected->second;
 	}
 	LOG("END XmlMenu::~cXmlMenu()");
 }
@@ -253,8 +252,7 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			case kOk:
 						{
 							// Обработка выбранного отображаемого пункта меню
-							std::pair<std::string, std::string> keyvalue = *selected;
-							executeItem(keyvalue.first.c_str(),keyvalue.second.c_str());
+							executeItem(selected->first->c_str(),selected->second->c_str());
 						}
 						break;
 			case kMenu:
@@ -397,7 +395,7 @@ void cXmlMenu::Set(const char *Xpath) {
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString data(xproc.S_compute_xpath());
-		collection.push_back(std::make_pair(string(item.c_str()),string(data.c_str())));
+		collection.push_back(std::make_pair(new string(item.c_str()),new string(data.c_str())));
 		LOG(item.c_str());
 		LOG(data.c_str());
 	}
