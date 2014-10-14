@@ -165,7 +165,8 @@ cXmlMenu::cXmlMenu(eOsdState State)
 			LOG(count);
 			for(unsigned i=1; i<=count; i++) {
 				TiXmlString item(current + "/Item" + stateFilter[State] + "[" + c_str(toStr(i)) + "]");
-				xpath_processor xproc(doc -> RootElement(),item.c_str());
+				TiXmlString text(item + "/text()");
+				xpath_processor xproc(doc -> RootElement(),text.c_str());
 				TiXmlString data(xproc.S_compute_xpath());
 				submenuOpen = executeItem(item.c_str(),data.c_str()) || submenuOpen;
 			}
@@ -214,7 +215,8 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			LOG(count);
 			for(unsigned i=1; i<=count; i++) {
 				TiXmlString item(current + "/Item" + keyFilter[Key] + "[" + c_str(toStr(i)) + "]");
-				xpath_processor xproc(doc -> RootElement(),item.c_str());
+				TiXmlString text(item + "/text()");
+				xpath_processor xproc(doc -> RootElement(),text.c_str());
 				TiXmlString data(xproc.S_compute_xpath());
 				executeItem(item.c_str(),data.c_str());
 			}
@@ -364,7 +366,8 @@ void cXmlMenu::Set(const char *Xpath) {
 	unsigned count2 = xproc2.u_compute_xpath_node_set ();
 	for(unsigned i=1; i<=count2; i++) {
 		TiXmlString item(current + "/Item[not(@type='list')][not(@browsable) or @browsable='true'][" + c_str(toStr(i)) + "]");
-		xpath_processor xproc(doc -> RootElement(),item.c_str());
+		TiXmlString text(item + "/text()");
+		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString data(xproc.S_compute_xpath());
 		collection.push_back(std::make_pair(string(item.c_str()),string(data.c_str())));
 	}
