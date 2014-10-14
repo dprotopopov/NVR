@@ -350,7 +350,7 @@ void cXmlMenu::Set(const char *Xpath) {
 		pclose(pipe);
 	}
 	TiXmlString items1(current+"/Item[not(@type='list')][not(@hidden) or @hidden='false']");
-	xpath_processor xproc1(doc -> RootElement(),items.c_str());
+	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
 	for(unsigned i=1; i<=count1; i++) {
 		TiXmlString item(current + "/Item[not(@type='list')][not(@hidden) or @hidden='false'][" + c_str(toStr(i)) + "]");
@@ -360,7 +360,7 @@ void cXmlMenu::Set(const char *Xpath) {
 		add(tr(title.c_str()));
 	}
 	TiXmlString items2(current+"/Item[not(@type='list')][not(@browsable='false') or @browsable]");
-	xpath_processor xproc2(doc -> RootElement(),items1.c_str());
+	xpath_processor xproc2(doc -> RootElement(),items2.c_str());
 	unsigned count2 = xproc2.u_compute_xpath_node_set ();
 	for(unsigned i=1; i<=count2; i++) {
 		TiXmlString item(current + "/Item[not(@type='list')][not(@browsable='false') or @browsable][" + c_str(toStr(i)) + "]");
