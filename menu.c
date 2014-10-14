@@ -273,20 +273,23 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 	bool submenuOpen = false;
 	TiXmlString item(Key);
 	TiXmlString data(Value);
-	xpath_processor xproc(doc -> RootElement(),item.c_str());
-	TiXmlString value(xproc.S_compute_xpath());
 	LOG(item.c_str());
 	LOG(data.c_str());
-	LOG(value.c_str());
+	TiXmlString attrText(item + "/text()");
 	TiXmlString attrType(item + "/@type");
 	TiXmlString attrRegex(item + "/@regex");
 	LOG(attrType.c_str());
 	LOG(attrRegex.c_str());
+	LOG(attrText.c_str());
 	xpath_processor xprocType(doc -> RootElement(),attrType.c_str());
 	xpath_processor xprocRegex(doc -> RootElement(),attrRegex.c_str());
+	xpath_processor xprocValue(doc -> RootElement(),attrText.c_str());
+	TiXmlString value(xprocValue.S_compute_xpath());
 	TiXmlString type(xprocType.S_compute_xpath());
 	TiXmlString pattern(xprocRegex.S_compute_xpath());
 	LOG(type.c_str());
+	LOG(pattern.c_str());
+	LOG(value.c_str());
 	// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
 	if(std::strcmp(type.c_str(),"menu")==0) {
 		AddSubMenu(new cXmlMenu(item.c_str()));
