@@ -25,8 +25,8 @@
 class cXmlMenu : public cOsdMenu {
 	private:
 		const char *xpath;
-		std::vector<std::pair<std::string, std::string>> collection;
-		std::vector<std::pair<std::string, std::string>>::iterator selected;
+		std::vector< std::pair< std::string, std::string > > collection;
+		std::vector< std::pair< std::string, std::string > >::iterator selected;
 		cDisplayMenu DisplayMenu;
 	public:
 		cXmlMenu(const char *Xpath);
