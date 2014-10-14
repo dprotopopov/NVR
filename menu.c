@@ -128,17 +128,18 @@ void cMenuSchedule::Update() {
 }
 /*** cXmlMenu *******************************************************************************/
 cXmlMenu::cXmlMenu(const char *Xpath)
-:cOsdMenu(tr(GetTitle(xpath = Xpath))) // Присвоение просто указателя может приводить к ошибкам если последующий код не контролирует память
+:cOsdMenu(tr(GetTitle(xpath = Xpath)))
 {
 	LOG("BEGIN XmlMenu::cXmlMenu(const char *Xpath)");
 	LOG(Xpath);
 	LoadFile();
-	Set(Xpath);
+	Set();
 	LOG("END XmlMenu::cXmlMenu(const char *Xpath)");
 }
 cXmlMenu::cXmlMenu(eOsdState State)
 :cOsdMenu(tr(GetTitle(xpath = "/Menu")))
 {
+	
 	LOG("BEGIN cXmlMenu::cXmlMenu(eOsdState State)");
 	// open Submenu
 	switch(State) {
@@ -155,7 +156,7 @@ cXmlMenu::cXmlMenu(eOsdState State)
 			stateFilter[osSetup]="[@state='osSetup']";
 			LOG(stateFilter[State].c_str());
 			bool submenuOpen = false;
-			TiXmlString current(xpath);
+			TiXmlString current(xpath.c_str());
 			LOG(current.c_str());
 			// Обработка действий запрограммированных на статусы
 			TiXmlString items(current+"/Item"+stateFilter[State]);
@@ -173,7 +174,7 @@ cXmlMenu::cXmlMenu(eOsdState State)
 				submenuOpen = executeItem(item.c_str(),data.c_str()) || submenuOpen;
 			}
 			if(!submenuOpen){
-				Set(xpath);
+				Set();
 			}
 			break;
 	}
@@ -212,7 +213,7 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			keyFilter[k3long]="[@key='k3long']";
 			keyFilter[k4long]="[@key='k4long']";
 			LOG(keyFilter[Key].c_str());
-			TiXmlString current(xpath);
+			TiXmlString current(xpath.c_str());
 			// Обработка действий запрограммированных на события
 			TiXmlString items(current+"/Item"+keyFilter[Key]);
 			LOG(items.c_str());
@@ -340,10 +341,10 @@ void cXmlMenu::killSubMenu() {
 		CloseSubMenu();
 	LOG("END cXmlMenu::killSubMenu()");
 }
-void cXmlMenu::Set(const char *Xpath) {
-	LOG("BEGIN cXmlMenu::Set(const char *Xpath)");
+void cXmlMenu::Set() {
+	LOG("BEGIN cXmlMenu::Set()");
 	LoadFile();
-	TiXmlString current(Xpath);
+	TiXmlString current(xpath.c_str());
 	TiXmlString attrTitle(current + "/@title");
 	TiXmlString attrText(current + "/text()");
 	xpath_processor xprocValue(doc -> RootElement(),attrText.c_str());
@@ -406,19 +407,19 @@ void cXmlMenu::Set(const char *Xpath) {
 	DisplayMenu.setTitle(title.c_str());
 	DisplayMenu.setMenuList(show());
 	DisplayMenu.Draw();
-	LOG(Xpath);
+	LOG(current.c_str());
 	LOG(items.c_str());
 	LOG(items1.c_str());
 	LOG(items2.c_str());
 	LOG(value.c_str());
 	LOG(title.c_str());
-	LOG("END cXmlMenu::Set(const char *Xpath)");
+	LOG("END cXmlMenu::Set()");
 }
 // Получение заголовка меню
-const char * cXmlMenu::GetTitle(const char *Xpath) {
-	LOG("BEGIN cXmlMenu::GetTitle(const char *Xpath)");
+const char * cXmlMenu::GetTitle(std::string &Xpath) {
+	LOG("BEGIN cXmlMenu::GetTitle(std::string &Xpath)");
 	LoadFile();
-	TiXmlString item(Xpath);
+	TiXmlString item(Xpath.c_str());
 	TiXmlString attr(item + "/@title");
 	xpath_processor xproc(doc -> RootElement(),attr.c_str());
 	TiXmlString title(xproc.S_compute_xpath());
@@ -426,7 +427,7 @@ const char * cXmlMenu::GetTitle(const char *Xpath) {
 	strcpy(buffer, title.c_str());
 	LOG(Xpath);
 	LOG(buffer);
-	LOG("END cXmlMenu::GetTitle(const char *Xpath)");
+	LOG("END cXmlMenu::GetTitle(std::string &Xpath)");
 	return buffer;
 }
 void cXmlMenu::Update() {

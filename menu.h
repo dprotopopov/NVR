@@ -24,7 +24,7 @@
 /*** cXmlMenu *******************************************************************************/
 class cXmlMenu : public cOsdMenu {
 	private:
-		const char *xpath;
+		std::string xpath;
 		std::vector< std::pair< *std::string, *std::string > > collection;
 		std::vector< std::pair< *std::string, *std::string > >::iterator selected;
 		cDisplayMenu DisplayMenu;
@@ -35,8 +35,8 @@ class cXmlMenu : public cOsdMenu {
 		eOsdState ProcessKey(eKeys Key);
 		void killSubMenu();
 		bool executeItem(const char *Key, const char *Value);
-		const char *GetTitle(const char *Xpath);
-		void Set(const char *Xpath);
+		const char *GetTitle(std::string &Xpath);
+		void Set();
 		void Update();
 		void LoadFile();
 };
