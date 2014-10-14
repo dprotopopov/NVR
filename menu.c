@@ -131,9 +131,9 @@ cXmlMenu::cXmlMenu(const char *Xpath)
 :cOsdMenu(tr(GetTitle(xpath = Xpath)))
 {
 	LOG("BEGIN XmlMenu::cXmlMenu(const char *Xpath)");
-	LOG(Xpath);
 	LoadFile();
 	Set(Xpath);
+	LOG(Xpath);
 	LOG("END XmlMenu::cXmlMenu(const char *Xpath)");
 }
 cXmlMenu::cXmlMenu(eOsdState State)
@@ -231,13 +231,13 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 							// Обработка перемещения по отображаемому меню
 							switch (Key) {
 								case kLeft:
-									if(selected == collection.begin()) 
+									if(selected <= collection.begin()) 
 										selected = collection.end();
 									selected--;
 									break;
 							case kRight:
 									selected++;
-									if(selected == collection.end()) 
+									if(selected >= collection.end()) 
 										selected = collection.begin();
 									break;
 							}
@@ -267,29 +267,19 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 // Возвращает true если было добавлено подменю
 bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 	LOG("BEGIN cXmlMenu::executeItem(const char *Key, const char *Value)");
-	LOG(Key);
-	LOG(Value);
 	LoadFile();
 	bool submenuOpen = false;
 	TiXmlString item(Key);
 	TiXmlString data(Value);
-	LOG(item.c_str());
-	LOG(data.c_str());
 	TiXmlString attrText(item + "/text()");
 	TiXmlString attrType(item + "/@type");
 	TiXmlString attrRegex(item + "/@regex");
-	LOG(attrType.c_str());
-	LOG(attrRegex.c_str());
-	LOG(attrText.c_str());
 	xpath_processor xprocType(doc -> RootElement(),attrType.c_str());
 	xpath_processor xprocRegex(doc -> RootElement(),attrRegex.c_str());
 	xpath_processor xprocValue(doc -> RootElement(),attrText.c_str());
 	TiXmlString value(xprocValue.S_compute_xpath());
 	TiXmlString type(xprocType.S_compute_xpath());
 	TiXmlString pattern(xprocRegex.S_compute_xpath());
-	LOG(type.c_str());
-	LOG(pattern.c_str());
-	LOG(value.c_str());
 	// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
 	if(std::strcmp(type.c_str(),"menu")==0) {
 		AddSubMenu(new cXmlMenu(item.c_str()));
@@ -320,6 +310,16 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 		TiXmlString msg(trace.S_compute_xpath());
 		if(!msg.empty()) printf("%s\n",msg.c_str());
 	}
+	LOG(Key);
+	LOG(Value);
+	LOG(item.c_str());
+	LOG(data.c_str());
+	LOG(attrType.c_str());
+	LOG(attrRegex.c_str());
+	LOG(attrText.c_str());
+	LOG(type.c_str());
+	LOG(pattern.c_str());
+	LOG(value.c_str());
 	LOG("END cXmlMenu::executeItem(const char *Key, const char *Value)");
 	return submenuOpen;
 }
@@ -331,11 +331,9 @@ void cXmlMenu::killSubMenu() {
 }
 void cXmlMenu::Set(const char *Xpath) {
 	LOG("BEGIN cXmlMenu::Set(const char *Xpath)");
-	LOG(Xpath);
 	LoadFile();
 	TiXmlString current(Xpath);
 	TiXmlString items(current+"/Item[@type='list']");
-	//LOG(items.c_str());
 	xpath_processor xproc(doc -> RootElement(),items.c_str());
 	unsigned count = xproc.u_compute_xpath_node_set ();
 	for(unsigned i=1; i<=count; i++) {
@@ -379,12 +377,15 @@ void cXmlMenu::Set(const char *Xpath) {
 	DisplayMenu.setTitle(title);
 	DisplayMenu.setMenuList(show());
 	DisplayMenu.Draw();
+	LOG(Xpath);
+	LOG(items.c_str());
+	LOG(items1.c_str());
+	LOG(items2.c_str());
 	LOG("END cXmlMenu::Set(const char *Xpath)");
 }
 // Получение заголовка меню
 const char * cXmlMenu::GetTitle(const char *Xpath) {
-	//LOG("BEGIN cXmlMenu::GetTitle(const char *Xpath)");
-	//LOG(Xpath);
+	LOG("BEGIN cXmlMenu::GetTitle(const char *Xpath)");
 	LoadFile();
 	TiXmlString item(Xpath);
 	TiXmlString attr(item + "/@title");
@@ -392,17 +393,18 @@ const char * cXmlMenu::GetTitle(const char *Xpath) {
 	TiXmlString title(xproc.S_compute_xpath());
 	static char buffer[512];
 	strcpy(buffer, title.c_str());
-	//LOG(buffer);
-	//LOG("END cXmlMenu::GetTitle(const char *Xpath)");
+	LOG(Xpath);
+	LOG(buffer);
+	LOG("END cXmlMenu::GetTitle(const char *Xpath)");
 	return buffer;
 }
 void cXmlMenu::Update() {
-	//LOG("BEGIN cXmlMenu::Update()");
+	LOG("BEGIN cXmlMenu::Update()");
 	printf("update");
-	//LOG("END cXmlMenu::Update()");
+	LOG("END cXmlMenu::Update()");
 }
 void cXmlMenu::LoadFile() {
-	//LOG("BEGIN cXmlMenu::LoadFile()");
+	LOG("BEGIN cXmlMenu::LoadFile()");
 	if(doc == NULL) {
 		LOG("BEGIN TiXmlDocument LoadFile");
 		// The simplest way to load a file into a TinyXML DOM is:
@@ -410,5 +412,5 @@ void cXmlMenu::LoadFile() {
 		doc -> LoadFile();
 		LOG("END TiXmlDocument LoadFile");
 	}
-	//LOG("END cXmlMenu::LoadFile()");
+	LOG("END cXmlMenu::LoadFile()");
 }

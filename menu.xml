@@ -30,7 +30,7 @@
 		<Item type="command" key="kOk" browsable="true" hidden="true" title="Folder Selected" regex="(.*)" >if [ -d $0 ] cd $0</Item>
 		<Item type="goto" key="kOk" browsable="false" hidden="true" title="Folder Selected" >mediaPlayer</Item>
 	</Item>
-	<Item type="menu" browsable="true" hidden="false" title="Settings" >
+	<Item type="menu" key="k0" browsable="true" hidden="false" title="Settings" >
 		<Item type="menu" browsable="true" hidden="false" title="Network" >
 			<Item type="menu" browsable="true" hidden="false" title="W-LAN" >
 				<Item type="list" browsable="true" hidden="false" title="Select W-LAN" >cd ~ && type w-lan.list</Item>
