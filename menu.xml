@@ -1,10 +1,11 @@
-<?xml version="1.0" ?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Menu title="Hauptmenu">
 	<Item type="menu" browsable="true" hidden="false" title="Summary" >
-		<Item type="list" browsable="false" title="Select" >cd ~ && ./summary.sh</Item>
+		<Item type="add" key="kOk" browsable="false" hidden="true" title="Greeting" >Welcome To Device</Item>
+		<Item type="add" key="kOk" browsable="false" hidden="true" title="Greeting" >Developer dmitry [at] protopopov.ru</Item>
 	</Item>
 	<Item id="channels" browsable="true" hidden="false" type="menu" title="Channels" >
-		<Item type="list" browsable="true" hidden="false" title="Select Channels" >cd ~ && type channels.list</Item>
+		<Item type="list" title="Select Channels" >cd ~ && type channels.list</Item>
 		<Item type="command" key="k1" browsable="false" hidden="false" title="F1 - Add To Favorites" regex="(.*)" >cd ~ && echo $& >> favorites.list</Item>
 		<Item type="command" key="k2" browsable="false" hidden="false" title="F2 - Save Channels" >cd ~ && cp channels.list channels.list.backup</Item>
 		<Item type="command" key="k3" browsable="false" hidden="false" title="F3 - Add New Channels" >cd ~ && rm channels.list && cp newchannels.list channels.list</Item>
@@ -12,9 +13,9 @@
 		<Item type="goto" key="k3" browsable="false" hidden="true" title="Add New Channels" >channels</Item>
 		<Item type="goto" key="k4" browsable="false" hidden="true" title="Restore Channels" >channels</Item>
 	</Item>
-	<Item id="favorites" browsable="true" hidden="false" ttype="menu" title="Favorites" >
-		<Item type="list" browsable="true" hidden="false" title="Select Favorites" >cd ~ && type favorites.list</Item>
-		<Item type="command" key="k1" browsable="false" hidden="false" title="F1 - Remove From Favorites" regex="(.*)" >cd ~ && sed -i '/$0/d' favorites.list</Item>
+	<Item id="favorites" browsable="true" hidden="false" type="menu" title="Favorites" >
+		<Item type="list" title="Select Favorites" >cd ~ && type favorites.list</Item>
+		<Item type="command" key="k1" browsable="false" hidden="false" title="F1 - Remove From Favorites" regex="(.*)" >cd ~ && sed -i "/$0/d" favorites.list</Item>
 		<Item type="command" key="k2" browsable="false" hidden="false" title="F2 - Save Favorites" >cd ~ && cp favorites.list favorites.list.backup</Item>
 		<Item type="command" key="k3" browsable="false" hidden="false" title="F3 - Add New Favorites" >cd ~ && rm favorites.list && cp newfavorites.list favorites.list</Item>
 		<Item type="command" key="k4" browsable="false" hidden="false" title="F4 - Restore Favorites" >cd ~ && cp favorites.list.backup favorites.list</Item>
@@ -23,11 +24,11 @@
 		<Item type="goto" key="k4" browsable="false" hidden="true" title="Restore Favorites" >favorites</Item>
 	</Item>
 	<Item id="mediaPlayer" browsable="true" hidden="false" type="menu" title="MediaPlayer" >
-		<Item type="list" browsable="true" hidden="false" title="Select MediaPlayer" >ls -l</Item>
-		<Item type="command" key="k0" browsable="true" thidden="true" title="Home" >cd ~</Item>
-		<Item type="command" key="k1" browsable="true" thidden="true" title="Up" >cd ..</Item>
-		<Item type="command" key="kOk" browsable="true" thidden="true" title="Play" regex="(.*)" >if [ -f $0 ] ~/play.sh  $&</Item>
-		<Item type="command" key="kOk" browsable="true" hidden="true" title="Folder Selected" regex="(.*)" >if [ -d $0 ] cd $0</Item>
+		<Item type="list" title="Select MediaPlayer" >ls -l</Item>
+		<Item type="command" key="k1" browsable="true" thidden="true" title="F1 - Home" >cd ~ </Item>
+		<Item type="command" key="k2" browsable="true" thidden="true" title="F2 - Up" >cd .. </Item>
+		<Item type="command" key="kOk" browsable="false" thidden="true" title="Play" regex="(.*)" >if [ -f $0 ] ~/play.sh  $0</Item>
+		<Item type="command" key="kOk" browsable="false" hidden="true" title="Folder Selected" regex="(.*)" >if [ -d $0 ] cd $0</Item>
 		<Item type="goto" key="kOk" browsable="false" hidden="true" title="Folder Selected" >mediaPlayer</Item>
 	</Item>
 	<Item type="menu" key="k0" browsable="true" hidden="false" title="Settings" >

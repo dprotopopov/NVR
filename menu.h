@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -26,8 +27,10 @@
 class cXmlMenu : public cOsdMenu {
 	private:
 		std::string xpath;
-		std::vector< std::pair< *std::string, *std::string > > collection;
-		std::vector< std::pair< *std::string, *std::string > >::iterator selected;
+		std::vector<std::string> keys;
+		std::vector<std::string> values;
+		unsigned highlighted = 0;
+		unsigned total = 0;
 		cDisplayMenu DisplayMenu;
 	public:
 		cXmlMenu(const char *Xpath);
@@ -36,7 +39,7 @@ class cXmlMenu : public cOsdMenu {
 		eOsdState ProcessKey(eKeys Key);
 		void killSubMenu();
 		bool executeItem(const char *Key, const char *Value);
-		const char *GetTitle(std::string &Xpath);
+		const char *GetTitle(const char *Xpath);
 		void Set();
 		void Update();
 		void LoadFile();

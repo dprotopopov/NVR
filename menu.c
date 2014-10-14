@@ -18,7 +18,7 @@ const char *c_str(string s) {
 	return buffer;
 }
 
-#define LOG(x) do { std::cerr << x; std::cerr << std::endl; } while (0)
+#define LOG(x) // do { std::cerr << x; std::cerr << std::endl; } while (0)
 
 /*** cMenuMain ***********************************************************************************/
 // cMenuMain->cXmlMenu patch
@@ -130,7 +130,8 @@ void cMenuSchedule::Update() {
 // Разработчик dmitru@protopopov.ru
 
 cXmlMenu::cXmlMenu(const char *Xpath)
-:cOsdMenu(tr(GetTitle(xpath = Xpath)))
+:cOsdMenu(tr(GetTitle(Xpath)))
+,xpath(Xpath)
 {
 	LOG("BEGIN XmlMenu::cXmlMenu(const char *Xpath)");
 	LOG(Xpath);
@@ -139,7 +140,8 @@ cXmlMenu::cXmlMenu(const char *Xpath)
 	LOG("END XmlMenu::cXmlMenu(const char *Xpath)");
 }
 cXmlMenu::cXmlMenu(eOsdState State)
-:cOsdMenu(tr(GetTitle(xpath = "/Menu")))
+:cOsdMenu(tr(GetTitle("/Menu")))
+,xpath("/Menu")
 {
 	
 	LOG("BEGIN cXmlMenu::cXmlMenu(eOsdState State)");
@@ -185,14 +187,14 @@ cXmlMenu::cXmlMenu(eOsdState State)
 cXmlMenu::~cXmlMenu() {
 	LOG("BEGIN XmlMenu::~cXmlMenu()");
 	DisplayMenu.clear();
-	for(selected = collection.begin(); selected != collection.end(); selected++){
-		delete selected->first;
-		delete selected->second;
-	}
 	LOG("END XmlMenu::~cXmlMenu()");
 }
 eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 	// LOG("BEGIN cXmlMenu::ProcessKey(eKeys Key)");
+ 	if(subMenu != NULL) {
+		return subMenu->ProcessKey(Key);
+	}
+	
 	switch(Key) {
 		case kNone:
 			break;
@@ -225,7 +227,8 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 			for(unsigned i = 1; i <= count; i++) {
 				// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
 				// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
-				TiXmlString item("(" + current + "/Item" + keyFilter[Key] + ")[" + c_str(toStr(i)) + "]");
+				// TiXmlString item("(" + current + "/Item" + keyFilter[Key] + ")[" + c_str(toStr(i)) + "]");
+				TiXmlString item(current + "/Item" + keyFilter[Key] + "[" + c_str(toStr(i)) + "]");
 				TiXmlString text(item + "/text()");
 				xpath_processor xproc(doc -> RootElement(),text.c_str());
 				TiXmlString data(xproc.S_compute_xpath());
@@ -238,26 +241,24 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 		switch (Key) {
 			case kLeft:
 			case kRight:
-						{
+						if(total) {
 							// Обработка перемещения по отображаемому меню
 							switch (Key) {
 								case kLeft:
-									if(selected <= collection.begin()) 
-										selected = collection.end();
-									selected--;
+									highlighted = (highlighted + total - 1) % total;
 									break;
 							case kRight:
-									selected++;
-									if(selected >= collection.end()) 
-										selected = collection.begin();
+									highlighted = (highlighted + total + 1) % total;
 									break;
 							}
 						}
 						break;					
 			case kOk:
-						{
-							// Обработка выбранного отображаемого пункта меню
-							executeItem(selected->first->c_str(),selected->second->c_str());
+						if(total) {
+							LOG("Обработка выбранного отображаемого пункта меню");
+							LOG(keys[highlighted]);
+							LOG(values[highlighted]);
+							executeItem(keys[highlighted].c_str(),values[highlighted].c_str());
 						}
 						break;
 			case kMenu:
@@ -279,6 +280,8 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 	LOG("BEGIN cXmlMenu::executeItem(const char *Key, const char *Value)");
 	LoadFile();
 	bool submenuOpen = false;
+	LOG(Key);
+	LOG(Value);
 	TiXmlString item(Key);
 	TiXmlString data(Value);
 	TiXmlString attrType(item + "/@type");
@@ -306,7 +309,11 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 		system(command.c_str());
 	}
 	else if(std::strcmp(type.c_str(),"add")==0) {
-		add(tr(value.c_str()));
+		add(tr(data.c_str()));
+		DisplayMenu.clear();
+		DisplayMenu.setTitle(title.c_str());
+		DisplayMenu.setMenuList(show());
+		DisplayMenu.Draw();
 	}
 	else if(std::strcmp(type.c_str(),"show")==0) {
 		show();
@@ -323,8 +330,6 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 		TiXmlString msg(trace.S_compute_xpath());
 		if(!msg.empty()) printf("%s\n",msg.c_str());
 	}
-	LOG(Key);
-	LOG(Value);
 	LOG(item.c_str());
 	LOG(data.c_str());
 	LOG(attrType.c_str());
@@ -356,10 +361,12 @@ void cXmlMenu::Set() {
 	TiXmlString items(current+"/Item[@type='list']");
 	xpath_processor xproc(doc -> RootElement(),items.c_str());
 	unsigned count = xproc.u_compute_xpath_node_set ();
+	total = 0;
 	for(unsigned i = 1; i <= count; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
 		// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
-		TiXmlString item("(" + current + "/Item[@type='list'])[" + c_str(toStr(i)) + "]");
+		// TiXmlString item("(" + current + "/Item[@type='list'])[" + c_str(toStr(i)) + "]");
+		TiXmlString item(current + "/Item[@type='list'][" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString command(xproc.S_compute_xpath());
@@ -369,20 +376,25 @@ void cXmlMenu::Set() {
 		while(!feof(pipe)) {
 			if(fgets(buffer, sizeof(buffer), pipe) != NULL){
 				add(tr(buffer));
-				collection.push_back(std::make_pair(new string(item.c_str()),new string(buffer)));
+				string first(item.c_str());
+				string second(buffer);
+				keys.push_back(first);
+				values.push_back(second);
+				total++;
 				LOG(item.c_str());
 				LOG(buffer);
 			}
 		}
 		pclose(pipe);
 	}
-	TiXmlString items1(current+"/Item[not(@type='list') and not(@hidden and @hidden='true')]");
+	TiXmlString items1(current+"/Item[not(@type='list') and not(@hidden='true')]");
 	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count1; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
 		// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
-		TiXmlString item("(" + current + "/Item[not(@type='list') and not(@hidden and @hidden='true')])[" + c_str(toStr(i)) + "]");
+		// TiXmlString item("(" + current + "/Item[not(@type='list') and not(@hidden='true')])[" + c_str(toStr(i)) + "]");
+		TiXmlString item(current + "/Item[not(@type='list') and not(@hidden='true')][" + c_str(toStr(i)) + "]");
 		TiXmlString attr(item + "/@title");
 		xpath_processor xproc(doc -> RootElement(),attr.c_str());
 		TiXmlString title(xproc.S_compute_xpath());
@@ -390,21 +402,31 @@ void cXmlMenu::Set() {
 		LOG(item.c_str());
 		LOG(title.c_str());
 	}
-	TiXmlString items2(current+"/Item[not(@type='list') and @browsable and not(@browsable='false')]");
+	TiXmlString items2(current+"/Item[not(@type='list') and not(@browsable='false')]");
 	xpath_processor xproc2(doc -> RootElement(),items2.c_str());
 	unsigned count2 = xproc2.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count2; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
 		// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
-		TiXmlString item("(" + current + "/Item[not(@type='list') and @browsable and not(@browsable='false')])[" + c_str(toStr(i)) + "]");
+		// TiXmlString item("(" + current + "/Item[not(@type='list') and not(@browsable='false')])[" + c_str(toStr(i)) + "]");
+		TiXmlString item(current + "/Item[not(@type='list') and not(@browsable='false')][" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString data(xproc.S_compute_xpath());
-		collection.push_back(std::make_pair(new string(item.c_str()),new string(data.c_str())));
+		string first(item.c_str());
+		string second(data.c_str());
+		keys.push_back(first);
+		values.push_back(second);
+		total++;
 		LOG(item.c_str());
 		LOG(data.c_str());
 	}
-	selected = collection.begin();
+	highlighted = 0;
+	assert(total >= count2);
+	assert(keys.size() == total);
+	assert(values.size() == total);
+	LOG(total);
+	
 	DisplayMenu.clear();
 	DisplayMenu.setTitle(title.c_str());
 	DisplayMenu.setMenuList(show());
@@ -418,10 +440,10 @@ void cXmlMenu::Set() {
 	LOG("END cXmlMenu::Set()");
 }
 // Получение заголовка меню
-const char * cXmlMenu::GetTitle(std::string &Xpath) {
-	LOG("BEGIN cXmlMenu::GetTitle(std::string &Xpath)");
+const char * cXmlMenu::GetTitle(const char *Xpath) {
+	LOG("BEGIN cXmlMenu::GetTitle(const char *Xpath)");
 	LoadFile();
-	TiXmlString item(Xpath.c_str());
+	TiXmlString item(Xpath);
 	TiXmlString attr(item + "/@title");
 	xpath_processor xproc(doc -> RootElement(),attr.c_str());
 	TiXmlString title(xproc.S_compute_xpath());
@@ -429,7 +451,7 @@ const char * cXmlMenu::GetTitle(std::string &Xpath) {
 	strcpy(buffer, title.c_str());
 	LOG(Xpath);
 	LOG(buffer);
-	LOG("END cXmlMenu::GetTitle(std::string &Xpath)");
+	LOG("END cXmlMenu::GetTitle(const char *Xpath)");
 	return buffer;
 }
 void cXmlMenu::Update() {
