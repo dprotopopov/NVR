@@ -349,7 +349,7 @@ void cXmlMenu::Set(const char *Xpath) {
 		}
 		pclose(pipe);
 	}
-	TiXmlString items1(current+"/Item[not(@type='list')][not(@hidden) or @hidden='false')]");
+	TiXmlString items1(current+"/Item[not(@type='list')][not(@hidden) or @hidden='false']");
 	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
 	for(unsigned i=1; i<=count1; i++) {
