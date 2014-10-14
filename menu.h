@@ -22,6 +22,7 @@
 #include <boost/regex.hpp>
 
 /*** cXmlMenu *******************************************************************************/
+// Разработчик dmitru@protopopov.ru
 class cXmlMenu : public cOsdMenu {
 	private:
 		std::string xpath;

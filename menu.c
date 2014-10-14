@@ -127,6 +127,8 @@ void cMenuSchedule::Update() {
 	printf("update");
 }
 /*** cXmlMenu *******************************************************************************/
+// Разработчик dmitru@protopopov.ru
+
 cXmlMenu::cXmlMenu(const char *Xpath)
 :cOsdMenu(tr(GetTitle(xpath = Xpath)))
 {
