@@ -292,7 +292,7 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 	}
 	else if(std::strcmp(type.c_str(),"command")==0) {
 		boost::regex rx(string(pattern.c_str()),boost::regex::ECMAScript|boost::regex::icase);
-		string command(boost::regex_replace(data,rx,value));
+		string command(boost::regex_replace(string(data.c_str()),rx,string(value.c_str())));
 		LOG(command.c_str());
 		// http://stackoverflow.com/questions/8832326/how-can-i-execute-a-command-line-command-from-a-c-program
 		system(command.c_str());
