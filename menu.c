@@ -337,8 +337,8 @@ void cXmlMenu::Set(const char *Xpath) {
 	LOG("BEGIN cXmlMenu::Set(const char *Xpath)");
 	LoadFile();
 	TiXmlString current(Xpath);
-	TiXmlString attrTitle(item + "/@title");
-	TiXmlString attrText(item + "/text()");
+	TiXmlString attrTitle(current + "/@title");
+	TiXmlString attrText(current + "/text()");
 	xpath_processor xprocValue(doc -> RootElement(),attrText.c_str());
 	xpath_processor xprocTitle(doc -> RootElement(),attrTitle.c_str());
 	TiXmlString value(xprocValue.S_compute_xpath());
