@@ -342,7 +342,7 @@ void cXmlMenu::Set(const char *Xpath) {
 		while(!feof(pipe)) {
 			if(fgets(buffer, sizeof(buffer), pipe) != NULL){
 				add(tr(buffer));
-				collection.push_back(std::make_pair(item.c_str(),tr(buffer)));
+				collection.push_back(std::make_pair(string(item.c_str()),string(buffer)));
 			}
 		}
 		pclose(pipe);
@@ -364,7 +364,7 @@ void cXmlMenu::Set(const char *Xpath) {
 		TiXmlString item(current + "/Item[not(@type='list')][not(@browsable='false') or @browsable][" + c_str(toStr(i)) + "]");
 		xpath_processor xproc(doc -> RootElement(),item.c_str());
 		TiXmlString data(xproc.S_compute_xpath());
-		collection.push_back(std::make_pair(item.c_str(),data.c_str()));
+		collection.push_back(std::make_pair(string(item.c_str()),string(data.c_str())));
 	}
 	selected = collection.begin();
 	DisplayMenu.clear();

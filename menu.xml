@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <Menu title="Hauptmenu">
 	<Item type="menu" title="Summary" >
-		<Item type="list" browsable="false" title="Select" >~/summary.sh</Item>
+		<Item type="list" browsable="false" title="Select" >cd ~ && ./summary.sh</Item>
 	</Item>
 	<Item id="channels" type="menu" title="Channels" >
 		<Item type="list" title="Select" >cd ~ && type channels.list</Item>
