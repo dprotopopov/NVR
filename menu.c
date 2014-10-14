@@ -181,6 +181,11 @@ cXmlMenu::cXmlMenu(eOsdState State)
 cXmlMenu::~cXmlMenu() {
 	LOG("BEGIN XmlMenu::~cXmlMenu()");
 	DisplayMenu.clear();
+	for(selected = collection.begin(); selected != collection.end(); selected++){
+		std::pair<std::string, std::string> keyvalue = *selected;
+		delete keyvalue.first;
+		delete keyvalue.second;
+	}
 	LOG("END XmlMenu::~cXmlMenu()");
 }
 eOsdState cXmlMenu::ProcessKey(eKeys Key) {
@@ -361,7 +366,7 @@ void cXmlMenu::Set(const char *Xpath) {
 		while(!feof(pipe)) {
 			if(fgets(buffer, sizeof(buffer), pipe) != NULL){
 				add(tr(buffer));
-				collection.push_back(std::make_pair(string(item.c_str()),string(buffer)));
+				collection.push_back(std::make_pair(new string(item.c_str()),new string(buffer)));
 				LOG(item.c_str());
 				LOG(buffer);
 			}
