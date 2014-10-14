@@ -138,7 +138,7 @@ cXmlMenu::cXmlMenu(const char *Xpath)
 	LOG("END XmlMenu::cXmlMenu(const char *Xpath)");
 }
 cXmlMenu::cXmlMenu(eOsdState State)
-:cOsdMenu(tr(GetTitle(xpath("/Menu"))))
+:cOsdMenu(tr(GetTitle(xpath = "/Menu")))
 {
 	// LOG("BEGIN cXmlMenu::cXmlMenu(eOsdState State)");
 	// open Submenu
