@@ -229,12 +229,14 @@ eOsdState cXmlMenu::ProcessKey(eKeys Key) {
 							// Обработка перемещения по отображаемому меню
 							switch (Key) {
 								case kLeft:
-									if(selected != collection.begin()) selected--;
-									else selected = collection.end();
+									if(selected == collection.begin()) 
+										selected = collection.end();
+									selected--;
 									break;
 							case kRight:
-									if(selected != collection.end()) selected++;
-									else selected = collection.begin();
+									selected++;
+									if(selected == collection.end()) 
+										selected = collection.begin();
 									break;
 							}
 						}
