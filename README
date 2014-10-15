@@ -4,14 +4,9 @@ NVR
 # Step 1 - Update your system
 # if you’re on a Debian-based distribution like Ubuntu, try apt-get:
 apt-get update
-apt-get install -y intltool git-core curl build-essential openssl libssl-dev automake git
-# to install libxml++ and its documentation on debian, use apt-get or synaptic like so:
-apt-get install -y libxml++2.6-dev libglib2.0-dev
-git clone --recursive git://github.com/dprotopopov/NVR.git
-# to build boost under Linux:
-cd ~/NVR/boost && git pull && ./bootstrap.sh && ./b2
-# Libxml++ uses the GNOME git repository.
-cd ~/NVR/glibmm && git pull && ./autogen.sh && make clean && make
-cd ~/NVR/libxml++ && git pull && ./autogen.sh && make clean && make
+apt-get install -y git-core curl build-essential openssl libssl-dev git
+apt-get install -y intltool libxml++2.6-dev libglib2.0-dev libboost-dev
+apt-get install -y automake autoconf autotools-dev
+git clone git://github.com/dprotopopov/NVR.git
 # build and run
 cd ~/NVR && git pull && ./autogen.sh && make clean && make && ./nvr

@@ -2,9 +2,7 @@
 
 #-lwiringPi
 CC       = g++
-CFLAGS	 = -g -Wall -O3 -lintl $(LIBXMLXX_CFLAGS) $(LIBXMLXX_LIBS)
-CFLAGS	 += -I boost -I libxml++ -I glibmm
-CFLAGS	 +=  boost/stage/lib/libboost_regex.a
+CFLAGS	 = -g -Wall -O3 $(LIBXMLXX_CFLAGS) $(LIBXMLXX_LIBS) $(LIBGLIB_CFLAGS) $(LIBGLIB_LIBS) $(LIBBOOST_CFLAGS) $(LIBBOOST_LIBS) $(LIBINTL_CFLAGS) $(LIBINTL_LIBS)
 
 TARGET	 =nvr
 DESTDIR ?=
