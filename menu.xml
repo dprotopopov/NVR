@@ -6,7 +6,7 @@
 	</Item>
 	<Item id="channels" browsable="true" hidden="false" type="menu" title="Channels" >
 		<Item type="list" browsable="false" hidden="true" title="Select Channels" >cd ~ &amp;&amp; type channels.list</Item>
-		<Item type="command" key="k1" browsable="false" hidden="false" title="F1 - Add To Favorites" regex="(.*)" >cd ~ &amp;&amp; echo $&amp; >> favorites.list</Item>
+		<Item type="command" key="k1" browsable="false" hidden="false" title="F1 - Add To Favorites" regex="(.+)" >cd ~ &amp;&amp; echo $&amp; >> favorites.list</Item>
 		<Item type="command" key="k2" browsable="false" hidden="false" title="F2 - Save Channels" >cd ~ &amp;&amp; cp channels.list channels.list.backup</Item>
 		<Item type="command" key="k3" browsable="false" hidden="false" title="F3 - Add New Channels" >cd ~ &amp;&amp; rm channels.list &amp;&amp; cp newchannels.list channels.list</Item>
 		<Item type="command" key="k4" browsable="false" hidden="false" title="F4 - Restore Channels" >cd ~ &amp;&amp; cp channels.list.backup channels.list</Item>
@@ -15,7 +15,7 @@
 	</Item>
 	<Item id="favorites" browsable="true" hidden="false" type="menu" title="Favorites" >
 		<Item type="list" browsable="false" hidden="true" title="Select Favorites" >cd ~ &amp;&amp; type favorites.list</Item>
-		<Item type="command" key="k1" browsable="false" hidden="false" title="F1 - Remove From Favorites" regex="(.*)" >cd ~ &amp;&amp; sed -i "/$0/d" favorites.list</Item>
+		<Item type="command" key="k1" browsable="false" hidden="false" title="F1 - Remove From Favorites" regex="(.+)" >cd ~ &amp;&amp; sed -i "/$0/d" favorites.list</Item>
 		<Item type="command" key="k2" browsable="false" hidden="false" title="F2 - Save Favorites" >cd ~ &amp;&amp; cp favorites.list favorites.list.backup</Item>
 		<Item type="command" key="k3" browsable="false" hidden="false" title="F3 - Add New Favorites" >cd ~ &amp;&amp; rm favorites.list &amp;&amp; cp newfavorites.list favorites.list</Item>
 		<Item type="command" key="k4" browsable="false" hidden="false" title="F4 - Restore Favorites" >cd ~ &amp;&amp; cp favorites.list.backup favorites.list</Item>
@@ -27,16 +27,16 @@
 		<Item type="list" browsable="false" hidden="true" title="Select MediaPlayer" >ls -l</Item>
 		<Item type="command" key="k1" browsable="true" thidden="true" title="F1 - Home" >cd ~</Item>
 		<Item type="command" key="k2" browsable="true" thidden="true" title="F2 - Up" >cd ..</Item>
-		<Item type="command" key="kOk" browsable="false" thidden="true" title="Play" regex="(.*)" >if [ -f $0 ] ~/play.sh  $0</Item>
-		<Item type="command" key="kOk" browsable="false" hidden="true" title="Folder Selected" regex="(.*)" >if [ -d $0 ] cd $0</Item>
+		<Item type="command" key="kOk" browsable="false" thidden="true" title="Play" regex="(.+)" >if [ -f $0 ] ~/play.sh  $0</Item>
+		<Item type="command" key="kOk" browsable="false" hidden="true" title="Folder Selected" regex="(.+)" >if [ -d $0 ] cd $0</Item>
 		<Item type="goto" key="kOk" browsable="false" hidden="true" title="Folder Selected" >mediaPlayer</Item>
 	</Item>
 	<Item type="menu" key="k0" browsable="true" hidden="false" title="Settings" >
 		<Item type="menu" browsable="true" hidden="false" title="Network" >
 			<Item type="menu" browsable="true" hidden="false" title="W-LAN" >
 				<Item type="list" browsable="true" hidden="false" title="Select W-LAN" >cd ~ &amp;&amp; type w-lan.list</Item>
-				<Item type="command" key="kOk" browsable="false" hidden="true" title="W-LAN Selected" regex="(.*)" >cd ~ &amp;&amp; ./network.sh $0.conf</Item>
-				<Item type="goto" key="kOk" browsable="false" hidden="true" title="W-LAN Selected" regex="(.*)" >dhcp</Item>
+				<Item type="command" key="kOk" browsable="false" hidden="true" title="W-LAN Selected" regex="(.+)" >cd ~ &amp;&amp; ./network.sh $0.conf</Item>
+				<Item type="goto" key="kOk" browsable="false" hidden="true" title="W-LAN Selected" regex="(.+)" >dhcp</Item>
 			</Item>
 			<Item type="menu" browsable="true" hidden="false" title="LAN" >
 				<Item id="dhcp" type="menu" browsable="true" hidden="false" title="DHCP" >
