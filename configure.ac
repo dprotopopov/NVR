@@ -1,0 +1,12 @@
+AC_INIT([nvr], [1.0],[https://github.com/dprotopopov/NVR])
+AC_PREREQ([2.59])
+AC_CONFIG_AUX_DIR([build])
+AM_INIT_AUTOMAKE([-Wno-portability foreign])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
+AM_MAINTAINER_MODE([disable])
+AC_ARG_VAR([ACLOCAL_FLAGS], [aclocal flags, e.g. -I <macro dir>])
+AC_LANG([C++])
+AC_CHECK_HEADERS([string list map], [], [AC_MSG_ERROR([required headers not found])])
+PKG_CHECK_MODULES([LIBXMLXX], [libxml++-2.6])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

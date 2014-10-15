@@ -2,3 +2,11 @@
 	path = boost
 	url = git://github.com/boostorg/boost.git
 	fetchRecurseSubmodules = on-demand
+[submodule "libxml++"]
+	path = libxml++
+	url = git://git.gnome.org/browse/libxml++
+	fetchRecurseSubmodules = on-demand
+[submodule "glibmm"]
+	path = glibmm
+	url = git://github.com/GNOME/glibmm.git
+	fetchRecurseSubmodules = on-demand

@@ -40,6 +40,10 @@ int main(int argc, char *argv[]) {
 				return 0;
 		}
 	}
+	
+	std::string filepath("menu.xml");
+	parser = new xmlpp::DomParser(filepath);
+	root = parser->get_document()->get_root_node(); //deleted by DomParser.
 
 	// INIT FUNCTIONS
 	setlocale(LC_ALL, "");

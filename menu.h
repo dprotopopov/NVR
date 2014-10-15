@@ -17,9 +17,7 @@
 #include "i18n.h"
 #include "osd.h"
 
-#include <tinystr.h>
-#include <tinyxml.h>
-#include <xpath_processor.h>
+#include <libxml++/libxml++.h>
 #include <boost/regex.hpp>
 
 /*** cXmlMenu *******************************************************************************/
@@ -42,7 +40,6 @@ class cXmlMenu : public cOsdMenu {
 		const char *GetTitle(const char *Xpath);
 		void Set();
 		void Update();
-		void LoadFile();
 };
 
 /*** cMenuMain ***********************************************************************************/
@@ -61,7 +58,8 @@ class cMenuMain : public cOsdMenu {
 // cMenuMain->cXmlMenu patch
 //extern cMenuMain *Menu;
 extern cXmlMenu *Menu;
-extern TiXmlDocument *doc;
+extern xmlpp::DomParser *parser;
+extern xmlpp::Node* root;
 
 /*** cMenuSchedule *******************************************************************************/
 class cMenuSchedule : public cOsdMenu {
