@@ -1,5 +1,6 @@
 #include "menu.h"
 using namespace std;
+using namespace boost;
 using namespace TinyXPath;
 
 // Функция itoa — широко распространённое нестандартное расширение стандартного языка программирования Си. 
@@ -133,6 +134,7 @@ cXmlMenu::cXmlMenu(const char *Xpath)
 :cOsdMenu(tr(GetTitle(Xpath)))
 ,xpath(Xpath)
 {
+	subMenu = NULL; // А инициализировать кто будет - Пушкин?
 	LOG("BEGIN XmlMenu::cXmlMenu(const char *Xpath)");
 	LOG(Xpath);
 	LoadFile();
@@ -143,7 +145,7 @@ cXmlMenu::cXmlMenu(eOsdState State)
 :cOsdMenu(tr(GetTitle("/Menu")))
 ,xpath("/Menu")
 {
-	
+	subMenu = NULL; // А инициализировать кто будет - Пушкин?
 	LOG("BEGIN cXmlMenu::cXmlMenu(eOsdState State)");
 	// open Submenu
 	switch(State) {
@@ -295,23 +297,39 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 	TiXmlString type(xprocType.S_compute_xpath());
 	TiXmlString pattern(xprocRegex.S_compute_xpath());
 	TiXmlString value(xprocValue.S_compute_xpath());
-	TiXmlString title(xprocTitle.S_compute_xpath());
+	TiXmlString header(xprocTitle.S_compute_xpath());
 	// http://stackoverflow.com/questions/2931704/how-to-compare-string-with-const-char
 	if(std::strcmp(type.c_str(),"menu")==0) {
 		AddSubMenu(new cXmlMenu(item.c_str()));
 		submenuOpen = true;
 	}
 	else if(std::strcmp(type.c_str(),"command")==0) {
-		boost::regex rx(string(pattern.c_str()),boost::regex::ECMAScript|boost::regex::icase);
-		string command(boost::regex_replace(string(data.c_str()),rx,string(value.c_str())));
-		LOG(command.c_str());
-		// http://stackoverflow.com/questions/8832326/how-can-i-execute-a-command-line-command-from-a-c-program
-		system(command.c_str());
+		if(!data.empty()&&!pattern.empty()) {
+			// https://github.com/dprotopopov/Regex.MatchReplace
+			boost::regex expression(string(pattern.c_str()),boost::regex::ECMAScript|boost::regex::icase);
+			std::string file(data.c_str());
+			std::string::const_iterator start = file.begin(); 
+			std::string::const_iterator end = file.end(); 
+			boost::match_results<std::string::const_iterator> what; 
+			boost::match_flag_type flags = boost::match_default; 
+			while(regex_search(start, end, what, expression, flags)) 
+			{ 
+				// what[0] contains the whole string 
+				string command(boost::regex_replace(string(what[0]),expression,string(value.c_str())));
+				LOG(command.c_str());
+				// http://stackoverflow.com/questions/8832326/how-can-i-execute-a-command-line-command-from-a-c-program
+				system(command.c_str());
+			}
+		}
+		else {
+			// http://stackoverflow.com/questions/8832326/how-can-i-execute-a-command-line-command-from-a-c-program
+			system(value.c_str());
+		}
 	}
 	else if(std::strcmp(type.c_str(),"add")==0) {
-		add(tr(data.c_str()));
+		add(data.c_str());
 		DisplayMenu.clear();
-		DisplayMenu.setTitle(title.c_str());
+		DisplayMenu.setTitle(title);
 		DisplayMenu.setMenuList(show());
 		DisplayMenu.Draw();
 	}
@@ -338,7 +356,7 @@ bool cXmlMenu::executeItem(const char *Key, const char *Value) {
 	LOG(type.c_str());
 	LOG(pattern.c_str());
 	LOG(value.c_str());
-	LOG(title.c_str());
+	LOG(header.c_str());
 	LOG("END cXmlMenu::executeItem(const char *Key, const char *Value)");
 	return submenuOpen;
 }
@@ -357,7 +375,7 @@ void cXmlMenu::Set() {
 	xpath_processor xprocValue(doc -> RootElement(),attrText.c_str());
 	xpath_processor xprocTitle(doc -> RootElement(),attrTitle.c_str());
 	TiXmlString value(xprocValue.S_compute_xpath());
-	TiXmlString title(xprocTitle.S_compute_xpath());
+	TiXmlString header(xprocTitle.S_compute_xpath());
 	TiXmlString items(current+"/Item[@type='list']");
 	xpath_processor xproc(doc -> RootElement(),items.c_str());
 	unsigned count = xproc.u_compute_xpath_node_set ();
@@ -387,29 +405,33 @@ void cXmlMenu::Set() {
 		}
 		pclose(pipe);
 	}
-	TiXmlString items1(current+"/Item[not(@type='list') and not(@hidden='true')]");
+	// TiXmlString items1(current+"/Item[not(@type='list') and not(@hidden='true')]");
+	TiXmlString items1(current+"/Item[not(@type='list')][not(@hidden='true')]");
 	xpath_processor xproc1(doc -> RootElement(),items1.c_str());
 	unsigned count1 = xproc1.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count1; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
 		// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
 		// TiXmlString item("(" + current + "/Item[not(@type='list') and not(@hidden='true')])[" + c_str(toStr(i)) + "]");
-		TiXmlString item(current + "/Item[not(@type='list') and not(@hidden='true')][" + c_str(toStr(i)) + "]");
+		// TiXmlString item(current + "/Item[not(@type='list') and not(@hidden='true')][" + c_str(toStr(i)) + "]");
+		TiXmlString item(current + "/Item[not(@type='list')][not(@hidden='true')][" + c_str(toStr(i)) + "]");
 		TiXmlString attr(item + "/@title");
 		xpath_processor xproc(doc -> RootElement(),attr.c_str());
-		TiXmlString title(xproc.S_compute_xpath());
-		add(tr(title.c_str()));
+		TiXmlString header(xproc.S_compute_xpath());
+		add(tr(header.c_str()));
 		LOG(item.c_str());
-		LOG(title.c_str());
+		LOG(header.c_str());
 	}
-	TiXmlString items2(current+"/Item[not(@type='list') and not(@browsable='false')]");
+	// TiXmlString items2(current+"/Item[not(@type='list') and not(@browsable='false')]");
+	TiXmlString items2(current+"/Item[not(@type='list')][not(@browsable='false')]");
 	xpath_processor xproc2(doc -> RootElement(),items2.c_str());
 	unsigned count2 = xproc2.u_compute_xpath_node_set ();
 	for(unsigned i = 1; i <= count2; i++) {
 		// http://stackoverflow.com/questions/4007413/xpath-query-to-get-nth-instance-of-an-element
 		// Могут быть проблемы если реализация в библиотеке для Xpath отличается от обычной
 		// TiXmlString item("(" + current + "/Item[not(@type='list') and not(@browsable='false')])[" + c_str(toStr(i)) + "]");
-		TiXmlString item(current + "/Item[not(@type='list') and not(@browsable='false')][" + c_str(toStr(i)) + "]");
+		// TiXmlString item(current + "/Item[not(@type='list') and not(@browsable='false')][" + c_str(toStr(i)) + "]");
+		TiXmlString item(current + "/Item[not(@type='list')][not(@browsable='false')][" + c_str(toStr(i)) + "]");
 		TiXmlString text(item + "/text()");
 		xpath_processor xproc(doc -> RootElement(),text.c_str());
 		TiXmlString data(xproc.S_compute_xpath());
@@ -428,7 +450,7 @@ void cXmlMenu::Set() {
 	LOG(total);
 	
 	DisplayMenu.clear();
-	DisplayMenu.setTitle(title.c_str());
+	DisplayMenu.setTitle(title);
 	DisplayMenu.setMenuList(show());
 	DisplayMenu.Draw();
 	LOG(current.c_str());
@@ -436,7 +458,7 @@ void cXmlMenu::Set() {
 	LOG(items1.c_str());
 	LOG(items2.c_str());
 	LOG(value.c_str());
-	LOG(title.c_str());
+	LOG(header.c_str());
 	LOG("END cXmlMenu::Set()");
 }
 // Получение заголовка меню
@@ -446,9 +468,9 @@ const char * cXmlMenu::GetTitle(const char *Xpath) {
 	TiXmlString item(Xpath);
 	TiXmlString attr(item + "/@title");
 	xpath_processor xproc(doc -> RootElement(),attr.c_str());
-	TiXmlString title(xproc.S_compute_xpath());
+	TiXmlString header(xproc.S_compute_xpath());
 	static char buffer[512];
-	strcpy(buffer, title.c_str());
+	strcpy(buffer, header.c_str());
 	LOG(Xpath);
 	LOG(buffer);
 	LOG("END cXmlMenu::GetTitle(const char *Xpath)");
