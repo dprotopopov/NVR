@@ -4,7 +4,7 @@
 	fetchRecurseSubmodules = on-demand
 [submodule "libxml++"]
 	path = libxml++
-	url = git://git.gnome.org/browse/libxml++
+	url = git://git.gnome.org/libxml++
 	fetchRecurseSubmodules = on-demand
 [submodule "glibmm"]
 	path = glibmm
