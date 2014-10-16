@@ -2,6 +2,10 @@
 
 #-lwiringPi
 CC       = gcc
+SUBDIRS = libltdl # plus any subdirs you may already have
+ACLOCAL_AMFLAGS = -I libltdl/m4
+AM_CPPFLAGS = $(LTDLINCL)
+nvr_LDADD = $(LIBLTDL) # plus anything else you may already have
 
 #INTLLIBS  = -lintl
 INTLLIBS  =
