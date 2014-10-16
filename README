@@ -5,7 +5,7 @@ NVR
 # if you’re on a Debian-based distribution like Ubuntu, try apt-get:
 apt-get update
 apt-get install -y git-core curl build-essential openssl libssl-dev git
-apt-get install -y intltool libglib2.0 libxml++2.6-dev libglib2.0-dev libboost-dev
+apt-get install -y intltool libglib2.0 libxml++2.6-dev libglib2.0-dev libboost-all-dev libboost-dev
 apt-get install -y automake autoconf autotools-dev make
 git clone git://github.com/dprotopopov/NVR.git
 # build and run
