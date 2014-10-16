@@ -2,7 +2,7 @@
 
 #-lwiringPi
 CC       = g++
-CFLAGS	 = -g -Wall -O3 -lintl
+CFLAGS	 = -g -Wall -O3
 CFLAGS	+= $(LIBXML2_CFLAGS) $(LIBXML2_LIBS)
 CFLAGS	+= $(LIBXMLXX_CFLAGS) $(LIBXMLXX_LIBS)
 CFLAGS	+= $(LIBGLIB_CFLAGS) $(LIBGLIB_LIBS)
