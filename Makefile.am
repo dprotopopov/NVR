@@ -8,7 +8,7 @@ INTLLIBS  =
 BOOSTLIBS = -lboost_regex
 
 CFLAGS	 = -g -Wall -O3 $(INTLLIBS) $(BOOSTLIBS)
-CFLAGS	 += -I libxml++ $(LIBXMLXX_LIBS)
+CFLAGS	 += -Ilibxml++ -Llibxml++ -llibxml++-2.6.la
 CFLAGS	 += $(LIBXML2_CFLAGS) $(LIBXML2_LIBS)
 #CFLAGS	 += $(LIBXMLXX_CFLAGS) $(LIBXMLXX_LIBS)
 CFLAGS	 += $(LIBGLIB_CFLAGS) $(LIBGLIB_LIBS)
