@@ -1,7 +1,7 @@
 #apt-get install libcurl3 libcurl3-dev libasound2-dev
 
 #-lwiringPi
-CC       = g++
+CC       = gcc
 
 #INTLLIBS  = -lintl
 INTLLIBS  =
@@ -30,7 +30,7 @@ all: nvr i18n
 nvr: $(OBJ)
 	$(CC) $(OBJ) $(CFLAGS) -o $(TARGET)
 
-.c.o:
+.cc.o:
 	$(CC) -c $(DEFINES) $(CFLAGS) $< -o $@
 
 
@@ -44,7 +44,7 @@ I18Npot   = $(PODIR)/nvr.pot
 %.mo: %.po
 	msgfmt -c -o $@ $<
 
-$(I18Npot): $(wildcard *.c)
+$(I18Npot): $(wildcard *.cc)
 	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --package-name=nvr -o $@ `ls $^`
 
 %.po: $(I18Npot)
