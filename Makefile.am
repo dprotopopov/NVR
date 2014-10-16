@@ -2,7 +2,12 @@
 
 #-lwiringPi
 CC       = g++
-CFLAGS	 = -g -Wall -O3 -lintl -lboost_regex
+
+#INTLLIBS  = -lintl
+INTLLIBS  =
+BOOSTLIBS = -lboost_regex
+
+CFLAGS	 = -g -Wall -O3 $(INTLLIBS) $(BOOSTLIBS)
 CFLAGS	 += -I libxml++ $(LIBXMLXX_LIBS)
 CFLAGS	 += $(LIBXML2_CFLAGS) $(LIBXML2_LIBS)
 #CFLAGS	 += $(LIBXMLXX_CFLAGS) $(LIBXMLXX_LIBS)
